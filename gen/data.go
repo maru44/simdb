@@ -13,6 +13,7 @@ type (
 	Material struct {
 		Name           string           `yaml:"name"`
 		Columns        []ColumnMaterial `yaml:"columns"`
+		PackageName    string
 		PrimaryKeyType ColumnType
 	}
 
