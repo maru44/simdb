@@ -1,0 +1,11 @@
+name: table_sample
+columns:
+  - name: id
+    type: int
+    isPK: true
+  - name: column1
+    type: int
+  - name: column2
+    type: int64
+  - name: column3
+    type: uint64
