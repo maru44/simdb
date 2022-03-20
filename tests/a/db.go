@@ -26,7 +26,7 @@ func NewTableA() TableAs {
 	}
 }
 
-func (t TableAs) Get(id uint) (TableA, error) {
+func (t *TableAs) Get(id uint) (TableA, error) {
 	v, ok := t.Data[id]
 	if !ok {
 		return TableA{}, errors.New("Not Exists")
@@ -34,7 +34,7 @@ func (t TableAs) Get(id uint) (TableA, error) {
 	return v, nil
 }
 
-func (t TableAs) Insert(id uint, value TableA) error {
+func (t *TableAs) Insert(id uint, value TableA) error {
 	if _, ok := t.Data[id]; ok {
 		return errors.New("Already Exists")
 	}
@@ -44,7 +44,7 @@ func (t TableAs) Insert(id uint, value TableA) error {
 	return nil
 }
 
-func (t TableAs) BulkInsert(values map[uint]TableA) error {
+func (t *TableAs) BulkInsert(values map[uint]TableA) error {
 	t.mux.Lock()
 	defer t.mux.Unlock()
 	for id, value := range values {
@@ -56,7 +56,7 @@ func (t TableAs) BulkInsert(values map[uint]TableA) error {
 	return nil
 }
 
-func (t TableAs) Update(id uint, value TableA) error {
+func (t *TableAs) Update(id uint, value TableA) error {
 	if _, ok := t.Data[id]; !ok {
 		return errors.New("Not Exists")
 	}
@@ -66,13 +66,13 @@ func (t TableAs) Update(id uint, value TableA) error {
 	return nil
 }
 
-func (t TableAs) Upsert(id uint, value TableA) {
+func (t *TableAs) Upsert(id uint, value TableA) {
 	t.mux.Lock()
 	defer t.mux.Unlock()
 	t.Data[id] = value
 }
 
-func (t TableAs) BulkUpsert(values map[uint]TableA) {
+func (t *TableAs) BulkUpsert(values map[uint]TableA) {
 	t.mux.Lock()
 	defer t.mux.Unlock()
 	for id, value := range values {
@@ -80,13 +80,13 @@ func (t TableAs) BulkUpsert(values map[uint]TableA) {
 	}
 }
 
-func (t TableAs) Delete(id uint) {
+func (t *TableAs) Delete(id uint) {
 	t.mux.Lock()
 	defer t.mux.Unlock()
 	delete(t.Data, id)
 }
 
-func (t TableAs) Truncate() {
+func (t *TableAs) Truncate() {
 	t.mux.Lock()
 	defer t.mux.Unlock()
 	t.Data = map[uint]TableA{}
