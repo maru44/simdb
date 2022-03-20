@@ -35,7 +35,7 @@ func main() {
 		log.Fatal("failed to render: ", err)
 	}
 
-	if _, err := os.Stat(pkgDir); os.IsNotExist(err) {
+	if _, err := os.Stat(filepath.Join(pkgDir, args.Package)); os.IsNotExist(err) {
 		if err := os.Mkdir(filepath.Dir(outputPath), 0755); err != nil {
 			log.Fatal("failed to make dir: ", err)
 		}
