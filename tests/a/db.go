@@ -16,7 +16,7 @@ type (
 
 	TableAs struct {
 		Data map[uint]TableA
-		mux  sync.Mutex
+		sync.RWMutex
 	}
 )
 
@@ -27,6 +27,8 @@ func NewTableA() TableAs {
 }
 
 func (t *TableAs) Get(id uint) (TableA, error) {
+	t.RLock()
+	defer t.RUnlock()
 	v, ok := t.Data[id]
 	if !ok {
 		return TableA{}, errors.New("Not Exists")
@@ -35,21 +37,21 @@ func (t *TableAs) Get(id uint) (TableA, error) {
 }
 
 func (t *TableAs) Insert(id uint, value TableA) error {
+	t.Lock()
 	if _, ok := t.Data[id]; ok {
-		return errors.New("Already Exists")
+		return errors.New("Duplicate Entry")
 	}
-	t.mux.Lock()
-	defer t.mux.Unlock()
+	defer t.Unlock()
 	t.Data[id] = value
 	return nil
 }
 
 func (t *TableAs) BulkInsert(values map[uint]TableA) error {
-	t.mux.Lock()
-	defer t.mux.Unlock()
+	t.Lock()
+	defer t.Unlock()
 	for id, value := range values {
 		if _, ok := t.Data[id]; ok {
-			return errors.New("Already Exists")
+			return errors.New("Duplicate Entry")
 		}
 		t.Data[id] = value
 	}
@@ -57,37 +59,37 @@ func (t *TableAs) BulkInsert(values map[uint]TableA) error {
 }
 
 func (t *TableAs) Update(id uint, value TableA) error {
+	t.Lock()
 	if _, ok := t.Data[id]; !ok {
 		return errors.New("Not Exists")
 	}
-	t.mux.Lock()
-	defer t.mux.Unlock()
+	defer t.Unlock()
 	t.Data[id] = value
 	return nil
 }
 
 func (t *TableAs) Upsert(id uint, value TableA) {
-	t.mux.Lock()
-	defer t.mux.Unlock()
+	t.Lock()
+	defer t.Unlock()
 	t.Data[id] = value
 }
 
 func (t *TableAs) BulkUpsert(values map[uint]TableA) {
-	t.mux.Lock()
-	defer t.mux.Unlock()
+	t.Lock()
+	defer t.Unlock()
 	for id, value := range values {
 		t.Data[id] = value
 	}
 }
 
 func (t *TableAs) Delete(id uint) {
-	t.mux.Lock()
-	defer t.mux.Unlock()
+	t.Lock()
+	defer t.Unlock()
 	delete(t.Data, id)
 }
 
 func (t *TableAs) Truncate() {
-	t.mux.Lock()
-	defer t.mux.Unlock()
+	t.Lock()
+	defer t.Unlock()
 	t.Data = map[uint]TableA{}
 }
