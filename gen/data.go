@@ -39,15 +39,7 @@ const (
 	ColumnTypeUpperInt16 = ColumnType("uint16")
 	ColumnTypeUpperInt32 = ColumnType("uint32")
 	ColumnTypeUpperInt64 = ColumnType("uint64")
-	// ColumnTypeBool       = ColumnType("bool")
-
-	ColumnOperatorEqual              = ColumnOperator("EQ")
-	ColumnOperatorNotEqual           = ColumnOperator("NEQ")
-	ColumnOperatorLessThan           = ColumnOperator("LT")
-	ColumnOperatorLessThanOrEqual    = ColumnOperator("LTE")
-	ColumnOperatorGreaterThan        = ColumnOperator("GT")
-	ColumnOperatorGreaterThanOrEqual = ColumnOperator("GTE")
-	// ColumnOperatorNone = ColumnOperator
+	ColumnTypeBool       = ColumnType("bool")
 )
 
 func (m *Material) Validate() error {
@@ -88,6 +80,8 @@ func (c *ColumnMaterial) Validate() error {
 	case ColumnTypeUpperInt32:
 		return nil
 	case ColumnTypeUpperInt64:
+		return nil
+	case ColumnTypeBool:
 		return nil
 	default:
 		return fmt.Errorf("Validation Error: Type not supported: %s", c.Type)

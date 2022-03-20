@@ -1,3 +1,0 @@
-package simdb
-
-type ()
