@@ -60,10 +60,10 @@ func (t *{{ $.Name }}s) BulkInsert(values map[{{ $.PrimaryKeyType }}]{{ $.Name }
 
 func (t *{{ $.Name }}s) Update(id {{ $.PrimaryKeyType }}, value {{ $.Name }} ) error {
     t.Lock()
+    defer t.Unlock()
    if _, ok := t.Data[id]; !ok {
         return errors.New("Not Exists")
     }
-    defer t.Unlock()
     t.Data[id] = value
     return nil
 }

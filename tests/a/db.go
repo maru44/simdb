@@ -60,10 +60,10 @@ func (t *TableAs) BulkInsert(values map[uint]TableA) error {
 
 func (t *TableAs) Update(id uint, value TableA) error {
 	t.Lock()
+	defer t.Unlock()
 	if _, ok := t.Data[id]; !ok {
 		return errors.New("Not Exists")
 	}
-	defer t.Unlock()
 	t.Data[id] = value
 	return nil
 }
