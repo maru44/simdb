@@ -2,16 +2,18 @@
 
 package {{ $.PackageName }}
 
+import "pkg/errors"
+
 type (
     {{ $.Name }} struct {
         {{ range $c := $.Columns -}}
-        {{ if not $c.IsPrimaryKey }} {{ $c.Name }} {{ $c.Type }} {{ end }}
-    {{ end -}}
+            {{ if not $c.IsPrimaryKey }} {{ $c.Name }} {{ $c.Type }} {{ end }}
+        {{ end -}}
+    }
 
     {{ $.Name }}s map[ {{ $.PrimaryKeyType }} ]{{ $.Name }}
-}
-
 )
+
 
 func Init{{ $.Name }}() {{ $.Name }}s {
     return map[ {{ $.PrimaryKeyType }} ]{{ $.Name }}{}
@@ -20,7 +22,7 @@ func Init{{ $.Name }}() {{ $.Name }}s {
 func (t *{{ $.Name }}s) Get(id {{ $.PrimaryKeyType }} ) ({{ $.Name }}, error) {
     v, ok := t[id]
     if !ok {
-        return 0, errors.New("Not Exists)
+        return {{ $.Name }}{}, errors.New("Not Exists")
     }
     return v, nil
 }

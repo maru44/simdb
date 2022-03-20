@@ -1,14 +1,18 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/stoewer/go-strcase"
+)
 
 type (
 	ColumnType     string
 	ColumnOperator string
 
-	IntLike interface {
-		int | int8 | int16 | int32 | int64 | uint | uint8 | uint16 | uint32 | uint64
-	}
+	// IntLike interface {
+	// 	int | int8 | int16 | int32 | int64 | uint | uint8 | uint16 | uint32 | uint64
+	// }
 
 	Material struct {
 		Name           string           `yaml:"name"`
@@ -88,4 +92,14 @@ func (c *ColumnMaterial) Validate() error {
 	default:
 		return fmt.Errorf("Validation Error: Type not supported: %s", c.Type)
 	}
+}
+
+func (m *Material) ToUpperCamel() {
+	m.Name = strcase.UpperCamelCase(m.Name)
+	cols := make([]ColumnMaterial, len(m.Columns))
+	for i, c := range m.Columns {
+		c.Name = strcase.UpperCamelCase(c.Name)
+		cols[i] = c
+	}
+	m.Columns = cols
 }
