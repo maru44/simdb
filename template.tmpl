@@ -3,7 +3,7 @@
 package {{ $.PackageName }}
 
 import (
-    "pkg/errors"
+    "errors"
     "sync"
 )
 
@@ -44,7 +44,7 @@ func (t {{ $.Name }}s) Insert(id {{ $.PrimaryKeyType }}, value {{ $.Name }} ) er
     return nil
 }
 
-func (t {{ $.Name }}s) BulkInsert(values {{ $.Name }}s) error {
+func (t {{ $.Name }}s) BulkInsert(values map[{{ $.PrimaryKeyType }}]{{ $.Name }}) error {
     t.mux.Lock()
     defer t.mux.Unlock()
     for id, value := range values {
@@ -72,7 +72,7 @@ func (t {{ $.Name }}s) Upsert(id {{ $.PrimaryKeyType }}, value {{ $.Name }} ) {
     t.Data[id] = value
 }
 
-func (t {{ $.Name }}s) BulkUpsert(values {{ $.Name }}s) {
+func (t {{ $.Name }}s) BulkUpsert(values  map[{{ $.PrimaryKeyType }}]{{ $.Name }}) {
     t.mux.Lock()
     defer t.mux.Unlock()
     for id, value := range values {
@@ -83,7 +83,7 @@ func (t {{ $.Name }}s) BulkUpsert(values {{ $.Name }}s) {
 func (t {{ $.Name }}s) Delete(id {{ $.PrimaryKeyType }}) {
     t.mux.Lock()
     defer t.mux.Unlock()
-    delete(t, id)
+    delete(t.Data, id)
 }
 
 func (t {{ $.Name }}s) Truncate() {

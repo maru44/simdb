@@ -8,33 +8,33 @@ import (
 )
 
 type (
-	TableSample struct {
-		Column1 int
-		Column2 int64
-		Column3 uint64
+	TableA struct {
+		Name      int32
+		ExpiredAt int64
+		IsExpired bool
 	}
 
-	TableSamples struct {
-		Data map[int]TableSample
+	TableAs struct {
+		Data map[uint]TableA
 		mux  sync.Mutex
 	}
 )
 
-func NewTableSample() TableSamples {
-	return TableSamples{
-		Data: map[int]TableSample{},
+func NewTableA() TableAs {
+	return TableAs{
+		Data: map[uint]TableA{},
 	}
 }
 
-func (t TableSamples) Get(id int) (TableSample, error) {
+func (t TableAs) Get(id uint) (TableA, error) {
 	v, ok := t.Data[id]
 	if !ok {
-		return TableSample{}, errors.New("Not Exists")
+		return TableA{}, errors.New("Not Exists")
 	}
 	return v, nil
 }
 
-func (t TableSamples) Insert(id int, value TableSample) error {
+func (t TableAs) Insert(id uint, value TableA) error {
 	if _, ok := t.Data[id]; ok {
 		return errors.New("Already Exists")
 	}
@@ -44,7 +44,7 @@ func (t TableSamples) Insert(id int, value TableSample) error {
 	return nil
 }
 
-func (t TableSamples) BulkInsert(values map[int]TableSample) error {
+func (t TableAs) BulkInsert(values map[uint]TableA) error {
 	t.mux.Lock()
 	defer t.mux.Unlock()
 	for id, value := range values {
@@ -56,7 +56,7 @@ func (t TableSamples) BulkInsert(values map[int]TableSample) error {
 	return nil
 }
 
-func (t TableSamples) Update(id int, value TableSample) error {
+func (t TableAs) Update(id uint, value TableA) error {
 	if _, ok := t.Data[id]; !ok {
 		return errors.New("Not Exists")
 	}
@@ -66,13 +66,13 @@ func (t TableSamples) Update(id int, value TableSample) error {
 	return nil
 }
 
-func (t TableSamples) Upsert(id int, value TableSample) {
+func (t TableAs) Upsert(id uint, value TableA) {
 	t.mux.Lock()
 	defer t.mux.Unlock()
 	t.Data[id] = value
 }
 
-func (t TableSamples) BulkUpsert(values map[int]TableSample) {
+func (t TableAs) BulkUpsert(values map[uint]TableA) {
 	t.mux.Lock()
 	defer t.mux.Unlock()
 	for id, value := range values {
@@ -80,14 +80,14 @@ func (t TableSamples) BulkUpsert(values map[int]TableSample) {
 	}
 }
 
-func (t TableSamples) Delete(id int) {
+func (t TableAs) Delete(id uint) {
 	t.mux.Lock()
 	defer t.mux.Unlock()
 	delete(t.Data, id)
 }
 
-func (t TableSamples) Truncate() {
+func (t TableAs) Truncate() {
 	t.mux.Lock()
 	defer t.mux.Unlock()
-	t.Data = map[int]TableSample{}
+	t.Data = map[uint]TableA{}
 }
