@@ -2,7 +2,10 @@
 
 package {{ $.PackageName }}
 
-import "pkg/errors"
+import (
+    "pkg/errors"
+    "sync"
+)
 
 type (
     {{ $.Name }} struct {
@@ -11,27 +14,80 @@ type (
         {{ end -}}
     }
 
-    {{ $.Name }}s map[ {{ $.PrimaryKeyType }} ]{{ $.Name }}
+    {{ $.Name }}s struct {
+        Data map[ {{ $.PrimaryKeyType }} ]{{ $.Name }}
+        mux sync.Mutex
+    }
 )
 
-
-func Init{{ $.Name }}() {{ $.Name }}s {
-    return map[ {{ $.PrimaryKeyType }} ]{{ $.Name }}{}
+func New{{ $.Name }}() {{ $.Name }}s {
+    return {{ $.Name }}s{
+        Data: map[ {{ $.PrimaryKeyType }} ]{{ $.Name }}{},
+    }
 }
 
-func (t *{{ $.Name }}s) Get(id {{ $.PrimaryKeyType }} ) ({{ $.Name }}, error) {
-    v, ok := t[id]
+func (t {{ $.Name }}s) Get(id {{ $.PrimaryKeyType }} ) ({{ $.Name }}, error) {
+    v, ok := t.Data[id]
     if !ok {
         return {{ $.Name }}{}, errors.New("Not Exists")
     }
     return v, nil
 }
 
-func (t *{{ $.Name }}s) Create(id {{ $.PrimaryKeyType }}, value {{ $.Name }} ) error {
-    v, ok := t[id]
-    if ok {
+func (t {{ $.Name }}s) Insert(id {{ $.PrimaryKeyType }}, value {{ $.Name }} ) error {
+    if _, ok := t.Data[id]; ok {
         return errors.New("Already Exists")
     }
-    v[id] = value
+    t.mux.Lock()
+    defer t.mux.Unlock()
+    t.Data[id] = value
     return nil
+}
+
+func (t {{ $.Name }}s) BulkInsert(values {{ $.Name }}s) error {
+    t.mux.Lock()
+    defer t.mux.Unlock()
+    for id, value := range values {
+        if _, ok := t.Data[id]; ok {
+            return errors.New("Already Exists")
+        }
+        t.Data[id] = value
+    }
+    return nil
+}
+
+func (t {{ $.Name }}s) Update(id {{ $.PrimaryKeyType }}, value {{ $.Name }} ) error {
+   if _, ok := t.Data[id]; !ok {
+        return errors.New("Not Exists")
+    }
+    t.mux.Lock()
+    defer t.mux.Unlock()
+    t.Data[id] = value
+    return nil
+}
+
+func (t {{ $.Name }}s) Upsert(id {{ $.PrimaryKeyType }}, value {{ $.Name }} ) {
+    t.mux.Lock()
+    defer t.mux.Unlock()
+    t.Data[id] = value
+}
+
+func (t {{ $.Name }}s) BulkUpsert(values {{ $.Name }}s) {
+    t.mux.Lock()
+    defer t.mux.Unlock()
+    for id, value := range values {
+        t.Data[id] = value
+    }
+}
+
+func (t {{ $.Name }}s) Delete(id {{ $.PrimaryKeyType }}) {
+    t.mux.Lock()
+    defer t.mux.Unlock()
+    delete(t, id)
+}
+
+func (t {{ $.Name }}s) Truncate() {
+    t.mux.Lock()
+    defer t.mux.Unlock()
+    t.Data = map[ {{ $.PrimaryKeyType }} ]{{ $.Name }}{}
 }
