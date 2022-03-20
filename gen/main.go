@@ -12,7 +12,6 @@ type commandArgs struct {
 	FileName          string `arg:"positional,required"`
 	Package           string `arg:"positional,required"`
 	GeneratedFileName string `arg:"positional,required"`
-	// Targets     []string `arg:"positional"`
 }
 
 func main() {
@@ -36,9 +35,11 @@ func main() {
 		log.Fatal("failed to render: ", err)
 	}
 
-	// if err := os.Mkdir(filepath.Dir(outputPath), 0755); err != nil {
-	// 	log.Fatal("failed to make dir: ", err)
-	// }
+	if _, err := os.Stat(pkgDir); os.IsNotExist(err) {
+		if err := os.Mkdir(filepath.Dir(outputPath), 0755); err != nil {
+			log.Fatal("failed to make dir: ", err)
+		}
+	}
 	if err := os.WriteFile(outputPath, data, 0600); err != nil {
 		log.Fatal("failed to write file: ", err)
 	}
