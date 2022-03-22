@@ -221,7 +221,7 @@ func TestBulkInsert(t *testing.T) {
 			},
 		},
 		{
-			name: "success: ",
+			name: "failed: duplicate",
 			inserts: map[uint]tableA{
 				4: {
 					Name: 4,
@@ -242,6 +242,41 @@ func TestBulkInsert(t *testing.T) {
 					Name: 2,
 				},
 				3: {
+					Name: 3,
+				},
+			},
+		},
+		{
+			name: "success: second",
+			inserts: map[uint]tableA{
+				4: {
+					Name: 4,
+				},
+				5: {
+					Name: 2,
+				},
+				6: {
+					Name: 3,
+				},
+			},
+			wantIsNoError: true,
+			wantItems: map[uint]tableA{
+				1: {
+					Name: 1,
+				},
+				2: {
+					Name: 2,
+				},
+				3: {
+					Name: 3,
+				},
+				4: {
+					Name: 4,
+				},
+				5: {
+					Name: 2,
+				},
+				6: {
 					Name: 3,
 				},
 			},
