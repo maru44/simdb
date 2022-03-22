@@ -20,14 +20,14 @@ type (
 	}
 )
 
-func (t *tableAs) Get(id uint) (*tableA, error) {
+func (t *tableAs) Get(id uint) (tableA, error) {
 	t.RLock()
 	defer t.RUnlock()
 	v, ok := t.Data[id]
 	if !ok {
-		return nil, fmt.Errorf("Not Exists: %v", id)
+		return tableA{}, fmt.Errorf("Not Exists: %v", id)
 	}
-	return &v, nil
+	return v, nil
 }
 
 func (t *tableAs) Insert(id uint, value tableA) error {
