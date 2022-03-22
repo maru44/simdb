@@ -58,7 +58,7 @@ func TestInsert(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			err := db.Insert(tt.insertID, tt.insertItem)
 			assert.Equal(t, tt.wantNoErr, err == nil)
-			assert.Equal(t, tt.wantItems, db.Data)
+			assert.Equal(t, tt.wantItems, db.List())
 		})
 	}
 }
@@ -125,7 +125,7 @@ func TestUpdate(t *testing.T) {
 			err := db.Update(tt.updateID, tt.updateItem)
 			assert.Equal(t, tt.wantNoErr, err == nil)
 
-			assert.Equal(t, tt.wantItems, db.Data)
+			assert.Equal(t, tt.wantItems, db.List())
 		})
 	}
 }
@@ -220,6 +220,32 @@ func TestBulkInsert(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "success: ",
+			inserts: map[uint]tableA{
+				4: {
+					Name: 4,
+				},
+				3: {
+					Name: 2,
+				},
+				5: {
+					Name: 3,
+				},
+			},
+			wantIsNoError: false,
+			wantItems: map[uint]tableA{
+				1: {
+					Name: 1,
+				},
+				2: {
+					Name: 2,
+				},
+				3: {
+					Name: 3,
+				},
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -227,7 +253,7 @@ func TestBulkInsert(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			err := db.BulkInsert(tt.inserts)
 			assert.Equal(t, tt.wantIsNoError, err == nil)
-			assert.Equal(t, tt.wantItems, db.Data)
+			assert.Equal(t, tt.wantItems, db.List())
 		})
 	}
 }
