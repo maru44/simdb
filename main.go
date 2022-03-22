@@ -29,18 +29,13 @@ func main() {
 		log.Fatal("failed to read config: ", err)
 	}
 
-	var args commandArgs
-	arg.MustParse(&args)
-
-	pkgDir, err := filepath.Abs(".")
-	if err != nil {
-		log.Fatal("failed to get package dir: ", err)
-	}
-
 	var m *Material
 	if err := viper.Unmarshal(&m); err != nil {
 		log.Fatal("failed to unmarshal material: ", err)
 	}
+
+	var args commandArgs
+	arg.MustParse(&args)
 
 	// set package name if blank
 	if m.PackageName == "" {
@@ -58,6 +53,10 @@ func main() {
 		log.Fatal("failed to validate: ", err)
 	}
 
+	pkgDir, err := filepath.Abs(".")
+	if err != nil {
+		log.Fatal("failed to get package dir: ", err)
+	}
 	outputPath := filepath.Join(pkgDir, args.Dir, args.GeneratedFileName)
 	data, err := render(outputPath, m)
 	if err != nil {
