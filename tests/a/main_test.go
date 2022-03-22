@@ -197,88 +197,46 @@ func TestBulkInsert(t *testing.T) {
 		{
 			name: "success: ",
 			inserts: map[uint]tableA{
-				1: {
-					Name: 1,
-				},
-				2: {
-					Name: 2,
-				},
-				3: {
-					Name: 3,
-				},
+				1: {Name: 1},
+				2: {Name: 2},
+				3: {Name: 3},
 			},
 			wantIsNoError: true,
 			wantItems: map[uint]tableA{
-				1: {
-					Name: 1,
-				},
-				2: {
-					Name: 2,
-				},
-				3: {
-					Name: 3,
-				},
+				1: {Name: 1},
+				2: {Name: 2},
+				3: {Name: 3},
 			},
 		},
 		{
 			name: "failed: duplicate",
 			inserts: map[uint]tableA{
-				4: {
-					Name: 4,
-				},
-				3: {
-					Name: 2,
-				},
-				5: {
-					Name: 3,
-				},
+				4: {Name: 4},
+				3: {Name: 2},
+				5: {Name: 3},
 			},
 			wantIsNoError: false,
 			wantItems: map[uint]tableA{
-				1: {
-					Name: 1,
-				},
-				2: {
-					Name: 2,
-				},
-				3: {
-					Name: 3,
-				},
+				1: {Name: 1},
+				2: {Name: 2},
+				3: {Name: 3},
 			},
 		},
 		{
 			name: "success: second",
 			inserts: map[uint]tableA{
-				4: {
-					Name: 4,
-				},
-				5: {
-					Name: 2,
-				},
-				6: {
-					Name: 3,
-				},
+				4: {Name: 4},
+				5: {Name: 2},
+				6: {Name: 3},
 			},
 			wantIsNoError: true,
 			wantItems: map[uint]tableA{
-				1: {
-					Name: 1,
-				},
-				2: {
-					Name: 2,
-				},
-				3: {
-					Name: 3,
-				},
-				4: {
-					Name: 4,
-				},
-				5: {
-					Name: 2,
-				},
-				6: {
-					Name: 3,
-				},
+				1: {Name: 1},
+				2: {Name: 2},
+				3: {Name: 3},
+				4: {Name: 4},
+				5: {Name: 2},
+				6: {Name: 3},
 			},
 		},
 	}
@@ -288,6 +246,53 @@ func TestBulkInsert(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			err := db.BulkInsert(tt.inserts)
 			assert.Equal(t, tt.wantIsNoError, err == nil)
+			assert.Equal(t, tt.wantItems, db.List())
+		})
+	}
+}
+
+func TestUpsert(t *testing.T) {
+	db := NewTableAs()
+
+	tests := []struct {
+		name      string
+		inputs    map[uint]tableA
+		wantItems map[uint]tableA
+	}{
+		{
+			name: "success: ",
+			inputs: map[uint]tableA{
+				1: {Name: 1},
+				2: {Name: 2},
+				3: {Name: 3},
+			},
+			wantItems: map[uint]tableA{
+				1: {Name: 1},
+				2: {Name: 2},
+				3: {Name: 3},
+			},
+		},
+		{
+			name: "success: even if duplicate entry",
+			inputs: map[uint]tableA{
+				4: {Name: 4},
+				3: {Name: 2},
+				5: {Name: 3},
+			},
+			wantItems: map[uint]tableA{
+				1: {Name: 1},
+				2: {Name: 2},
+				4: {Name: 4},
+				3: {Name: 2},
+				5: {Name: 3},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			db.BulkUpsert(tt.inputs)
 			assert.Equal(t, tt.wantItems, db.List())
 		})
 	}
