@@ -48,6 +48,13 @@ func (t *{{ $ | camel }}s) Get(id {{ $.KeyType }} ) ({{ $ | camel }}, error) {
     return v, nil
 }
 
+func (t *{{ $ | camel }}s) Load(id {{ $.KeyType }}) ({{ $ | camel }}, bool) {
+    t.RLock()
+    defer t.RUnlock()
+    value, ok := t.data[id]
+    return value, ok
+}
+
 func (t *{{ $ | camel }}s) Insert(id {{ $.KeyType }}, value {{ $ | camel }} ) error {
     t.Lock()
     defer t.Unlock()

@@ -50,6 +50,13 @@ func (t *benchs) Get(id int) (bench, error) {
 	return v, nil
 }
 
+func (t *benchs) Load(id int) (bench, bool) {
+	t.RLock()
+	defer t.RUnlock()
+	value, ok := t.data[id]
+	return value, ok
+}
+
 func (t *benchs) Insert(id int, value bench) error {
 	t.Lock()
 	defer t.Unlock()

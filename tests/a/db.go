@@ -49,6 +49,13 @@ func (t *tableAs) Get(id uint) (tableA, error) {
 	return v, nil
 }
 
+func (t *tableAs) Load(id uint) (tableA, bool) {
+	t.RLock()
+	defer t.RUnlock()
+	value, ok := t.data[id]
+	return value, ok
+}
+
 func (t *tableAs) Insert(id uint, value tableA) error {
 	t.Lock()
 	defer t.Unlock()
