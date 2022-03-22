@@ -8,14 +8,21 @@ type (
 	Material struct {
 		Name        string           `mapstructure:"name"`
 		Columns     []ColumnMaterial `mapstructure:"columns"`
+		IsPrivate   bool             `mapstructure:"is_private"`
 		PackageName string           `mapstructure:"package_name"`
 		KeyType     string
 	}
 
 	ColumnMaterial struct {
-		Name  string `mapstructure:"name"`
-		Type  string `mapstructure:"type"`
-		IsKey bool   `mapstructure:"is_key"`
+		Name      string `mapstructure:"name"`
+		Type      string `mapstructure:"type"`
+		IsPrivate bool   `mapstructure:"is_private"`
+		IsKey     bool   `mapstructure:"is_key"`
+	}
+
+	nameAndPrivate interface {
+		GetName() string
+		GetPrivate() bool
 	}
 )
 
@@ -34,4 +41,18 @@ func (m *Material) Validate() error {
 		return fmt.Errorf("Validation Error: Package name is required")
 	}
 	return nil
+}
+
+func (m *Material) GetName() string {
+	return m.Name
+}
+func (m *Material) GetPrivate() bool {
+	return m.IsPrivate
+}
+
+func (c *ColumnMaterial) GetName() string {
+	return c.Name
+}
+func (c *ColumnMaterial) GetPrivate() bool {
+	return c.IsPrivate
 }

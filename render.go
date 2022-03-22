@@ -15,7 +15,7 @@ var renderTemplate string
 
 func render(filePath string, m *Material) ([]byte, error) {
 	funcMap := map[string]interface{}{
-		"camel": toUpperCamel,
+		"camel": camelName,
 	}
 
 	tmpl, err := template.New("").Funcs(funcMap).Parse(renderTemplate)
@@ -40,9 +40,13 @@ func render(filePath string, m *Material) ([]byte, error) {
 	return out, nil
 }
 
-func toUpperCamel(s string) string {
+func camelName(m nameAndPrivate) string {
+	s := m.GetName()
 	if len(s) == 0 {
 		return s
+	}
+	if m.GetPrivate() {
+		return strcase.LowerCamelCase(s)
 	}
 	return strcase.UpperCamelCase(s)
 }

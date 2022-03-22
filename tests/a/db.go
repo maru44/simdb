@@ -8,29 +8,29 @@ import (
 )
 
 type (
-	TableA struct {
+	tableA struct {
 		Name      int32
 		ExpiredAt int64
 		IsExpired bool
 	}
 
-	TableAs struct {
-		Data map[uint]TableA
+	tableAs struct {
+		Data map[uint]tableA
 		sync.RWMutex
 	}
 )
 
-func (t *TableAs) Get(id uint) (TableA, error) {
+func (t *tableAs) Get(id uint) (tableA, error) {
 	t.RLock()
 	defer t.RUnlock()
 	v, ok := t.Data[id]
 	if !ok {
-		return TableA{}, errors.New("Not Exists")
+		return tableA{}, errors.New("Not Exists")
 	}
 	return v, nil
 }
 
-func (t *TableAs) Insert(id uint, value TableA) error {
+func (t *tableAs) Insert(id uint, value tableA) error {
 	t.Lock()
 	defer t.Unlock()
 	if _, ok := t.Data[id]; ok {
@@ -40,7 +40,7 @@ func (t *TableAs) Insert(id uint, value TableA) error {
 	return nil
 }
 
-func (t *TableAs) BulkInsert(values map[uint]TableA) error {
+func (t *tableAs) BulkInsert(values map[uint]tableA) error {
 	t.Lock()
 	defer t.Unlock()
 	for id, value := range values {
@@ -52,7 +52,7 @@ func (t *TableAs) BulkInsert(values map[uint]TableA) error {
 	return nil
 }
 
-func (t *TableAs) Update(id uint, value TableA) error {
+func (t *tableAs) Update(id uint, value tableA) error {
 	t.Lock()
 	defer t.Unlock()
 	if _, ok := t.Data[id]; !ok {
@@ -62,13 +62,13 @@ func (t *TableAs) Update(id uint, value TableA) error {
 	return nil
 }
 
-func (t *TableAs) Upsert(id uint, value TableA) {
+func (t *tableAs) Upsert(id uint, value tableA) {
 	t.Lock()
 	defer t.Unlock()
 	t.Data[id] = value
 }
 
-func (t *TableAs) BulkUpsert(values map[uint]TableA) {
+func (t *tableAs) BulkUpsert(values map[uint]tableA) {
 	t.Lock()
 	defer t.Unlock()
 	for id, value := range values {
@@ -76,14 +76,14 @@ func (t *TableAs) BulkUpsert(values map[uint]TableA) {
 	}
 }
 
-func (t *TableAs) Delete(id uint) {
+func (t *tableAs) Delete(id uint) {
 	t.Lock()
 	defer t.Unlock()
 	delete(t.Data, id)
 }
 
-func (t *TableAs) Truncate() {
+func (t *tableAs) Truncate() {
 	t.Lock()
 	defer t.Unlock()
-	t.Data = map[uint]TableA{}
+	t.Data = map[uint]tableA{}
 }

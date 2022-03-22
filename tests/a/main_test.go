@@ -8,27 +8,27 @@ import (
 )
 
 func TestInsert(t *testing.T) {
-	db := TableAs{
-		Data: map[uint]TableA{},
+	db := tableAs{
+		Data: map[uint]tableA{},
 	}
 
 	tests := []struct {
 		name       string
 		insertID   uint
-		insertItem TableA
+		insertItem tableA
 		wantNoErr  bool
-		wantItems  map[uint]TableA
+		wantItems  map[uint]tableA
 	}{
 		{
 			name:     "success: first",
 			insertID: uint(1),
-			insertItem: TableA{
+			insertItem: tableA{
 				Name:      777777,
 				ExpiredAt: time.Now().Add(2 * time.Hour).Unix(),
 				IsExpired: false,
 			},
 			wantNoErr: true,
-			wantItems: map[uint]TableA{
+			wantItems: map[uint]tableA{
 				1: {
 					Name:      777777,
 					ExpiredAt: time.Now().Add(2 * time.Hour).Unix(),
@@ -39,13 +39,13 @@ func TestInsert(t *testing.T) {
 		{
 			name:     "failed: duplicate entry",
 			insertID: uint(1),
-			insertItem: TableA{
+			insertItem: tableA{
 				Name:      777777,
 				ExpiredAt: time.Now().Add(2 * time.Hour).Unix(),
 				IsExpired: false,
 			},
 			wantNoErr: false,
-			wantItems: map[uint]TableA{
+			wantItems: map[uint]tableA{
 				1: {
 					Name:      777777,
 					ExpiredAt: time.Now().Add(2 * time.Hour).Unix(),

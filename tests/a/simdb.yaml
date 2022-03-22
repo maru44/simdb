@@ -1,4 +1,5 @@
 name: table_a
+is_private: true
 columns:
   - name: id
     type: uint
