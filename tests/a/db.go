@@ -26,6 +26,12 @@ func NewTableAs() tableAs {
 	}
 }
 
+func (t *tableAs) List() map[uint]tableA {
+	t.RLock()
+	defer t.RUnlock()
+	return t.Data
+}
+
 func (t *tableAs) Get(id uint) (tableA, error) {
 	t.RLock()
 	defer t.RUnlock()
@@ -49,10 +55,12 @@ func (t *tableAs) Insert(id uint, value tableA) error {
 func (t *tableAs) BulkInsert(values map[uint]tableA) error {
 	t.Lock()
 	defer t.Unlock()
-	for id, value := range values {
+	for id := range values {
 		if _, ok := t.Data[id]; ok {
 			return fmt.Errorf("Duplicate Entry: %v", id)
 		}
+	}
+	for id, value := range values {
 		t.Data[id] = value
 	}
 	return nil

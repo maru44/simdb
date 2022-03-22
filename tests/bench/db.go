@@ -27,6 +27,12 @@ func NewBenchs() benchs {
 	}
 }
 
+func (t *benchs) List() map[string]bench {
+	t.RLock()
+	defer t.RUnlock()
+	return t.Data
+}
+
 func (t *benchs) Get(id string) (bench, error) {
 	t.RLock()
 	defer t.RUnlock()
@@ -50,10 +56,12 @@ func (t *benchs) Insert(id string, value bench) error {
 func (t *benchs) BulkInsert(values map[string]bench) error {
 	t.Lock()
 	defer t.Unlock()
-	for id, value := range values {
+	for id := range values {
 		if _, ok := t.Data[id]; ok {
 			return fmt.Errorf("Duplicate Entry: %v", id)
 		}
+	}
+	for id, value := range values {
 		t.Data[id] = value
 	}
 	return nil
