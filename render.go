@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"text/template"
 
+	"github.com/stoewer/go-strcase"
 	"golang.org/x/tools/imports"
 )
 
@@ -13,7 +14,11 @@ import (
 var renderTemplate string
 
 func render(filePath string, m *Material) ([]byte, error) {
-	tmpl, err := template.New("").Parse(renderTemplate)
+	funcMap := map[string]interface{}{
+		"camel": toUpperCamel,
+	}
+
+	tmpl, err := template.New("").Funcs(funcMap).Parse(renderTemplate)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse tempalte: %w", err)
 	}
@@ -33,4 +38,11 @@ func render(filePath string, m *Material) ([]byte, error) {
 		return nil, fmt.Errorf("failed to process goimports: %w", err)
 	}
 	return out, nil
+}
+
+func toUpperCamel(s string) string {
+	if len(s) == 0 {
+		return s
+	}
+	return strcase.UpperCamelCase(s)
 }

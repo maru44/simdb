@@ -20,12 +20,6 @@ type (
 	}
 )
 
-func NewTableA() TableAs {
-	return TableAs{
-		Data: map[uint]TableA{},
-	}
-}
-
 func (t *TableAs) Get(id uint) (TableA, error) {
 	t.RLock()
 	defer t.RUnlock()
@@ -38,10 +32,10 @@ func (t *TableAs) Get(id uint) (TableA, error) {
 
 func (t *TableAs) Insert(id uint, value TableA) error {
 	t.Lock()
+	defer t.Unlock()
 	if _, ok := t.Data[id]; ok {
 		return errors.New("Duplicate Entry")
 	}
-	defer t.Unlock()
 	t.Data[id] = value
 	return nil
 }

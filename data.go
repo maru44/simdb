@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-
-	"github.com/stoewer/go-strcase"
 )
 
 type (
@@ -24,7 +22,7 @@ type (
 	ColumnMaterial struct {
 		Name         string     `yaml:"name"`
 		Type         ColumnType `yaml:"type"`
-		IsPrimaryKey bool       `yaml:"isPK"`
+		IsPrimaryKey bool       `yaml:"is_pk"`
 	}
 )
 
@@ -86,14 +84,4 @@ func (c *ColumnMaterial) Validate() error {
 	default:
 		return fmt.Errorf("Validation Error: Type not supported: %s", c.Type)
 	}
-}
-
-func (m *Material) ToUpperCamel() {
-	m.Name = strcase.UpperCamelCase(m.Name)
-	cols := make([]ColumnMaterial, len(m.Columns))
-	for i, c := range m.Columns {
-		c.Name = strcase.UpperCamelCase(c.Name)
-		cols[i] = c
-	}
-	m.Columns = cols
 }

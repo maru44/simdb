@@ -4,49 +4,42 @@ package {{ $.PackageName }}
 
 import (
     "errors"
-    "sync"
 )
 
 type (
-    {{ $.Name }} struct {
+    {{ $.Name | camel }} struct {
         {{ range $c := $.Columns -}}
-            {{ if not $c.IsPrimaryKey }} {{ $c.Name }} {{ $c.Type }} {{ end }}
+            {{ if not $c.IsPrimaryKey }} {{ $c.Name | camel }} {{ $c.Type }} {{ end }}
         {{ end -}}
     }
 
-    {{ $.Name }}s struct {
-        Data map[ {{ $.PrimaryKeyType }} ]{{ $.Name }}
+    {{ $.Name | camel }}s struct {
+        Data map[ {{ $.PrimaryKeyType }} ]{{ $.Name | camel }}
         sync.RWMutex
     }
 )
 
-func New{{ $.Name }}() {{ $.Name }}s {
-    return {{ $.Name }}s{
-        Data: map[ {{ $.PrimaryKeyType }} ]{{ $.Name }}{},
-    }
-}
-
-func (t *{{ $.Name }}s) Get(id {{ $.PrimaryKeyType }} ) ({{ $.Name }}, error) {
+func (t *{{ $.Name | camel }}s) Get(id {{ $.PrimaryKeyType }} ) ({{ $.Name | camel }}, error) {
     t.RLock()
     defer t.RUnlock()
     v, ok := t.Data[id]
     if !ok {
-        return {{ $.Name }}{}, errors.New("Not Exists")
+        return {{ $.Name | camel }}{}, errors.New("Not Exists")
     }
     return v, nil
 }
 
-func (t *{{ $.Name }}s) Insert(id {{ $.PrimaryKeyType }}, value {{ $.Name }} ) error {
+func (t *{{ $.Name | camel }}s) Insert(id {{ $.PrimaryKeyType }}, value {{ $.Name | camel }} ) error {
     t.Lock()
+    defer t.Unlock()
     if _, ok := t.Data[id]; ok {
         return errors.New("Duplicate Entry")
     }
-    defer t.Unlock()
     t.Data[id] = value
     return nil
 }
 
-func (t *{{ $.Name }}s) BulkInsert(values map[{{ $.PrimaryKeyType }}]{{ $.Name }}) error {
+func (t *{{ $.Name | camel }}s) BulkInsert(values map[{{ $.PrimaryKeyType }}]{{ $.Name | camel }}) error {
     t.Lock()
     defer t.Unlock()
     for id, value := range values {
@@ -58,23 +51,23 @@ func (t *{{ $.Name }}s) BulkInsert(values map[{{ $.PrimaryKeyType }}]{{ $.Name }
     return nil
 }
 
-func (t *{{ $.Name }}s) Update(id {{ $.PrimaryKeyType }}, value {{ $.Name }} ) error {
+func (t *{{ $.Name | camel }}s) Update(id {{ $.PrimaryKeyType }}, value {{ $.Name | camel }} ) error {
     t.Lock()
     defer t.Unlock()
-   if _, ok := t.Data[id]; !ok {
+    if _, ok := t.Data[id]; !ok {
         return errors.New("Not Exists")
     }
     t.Data[id] = value
     return nil
 }
 
-func (t *{{ $.Name }}s) Upsert(id {{ $.PrimaryKeyType }}, value {{ $.Name }} ) {
+func (t *{{ $.Name | camel }}s) Upsert(id {{ $.PrimaryKeyType }}, value {{ $.Name | camel }} ) {
     t.Lock()
     defer t.Unlock()
     t.Data[id] = value
 }
 
-func (t *{{ $.Name }}s) BulkUpsert(values  map[{{ $.PrimaryKeyType }}]{{ $.Name }}) {
+func (t *{{ $.Name | camel }}s) BulkUpsert(values  map[{{ $.PrimaryKeyType }}]{{ $.Name | camel }}) {
     t.Lock()
     defer t.Unlock()
     for id, value := range values {
@@ -82,14 +75,14 @@ func (t *{{ $.Name }}s) BulkUpsert(values  map[{{ $.PrimaryKeyType }}]{{ $.Name 
     }
 }
 
-func (t *{{ $.Name }}s) Delete(id {{ $.PrimaryKeyType }}) {
+func (t *{{ $.Name | camel }}s) Delete(id {{ $.PrimaryKeyType }}) {
     t.Lock()
     defer t.Unlock()
     delete(t.Data, id)
 }
 
-func (t *{{ $.Name }}s) Truncate() {
+func (t *{{ $.Name | camel }}s) Truncate() {
     t.Lock()
     defer t.Unlock()
-    t.Data = map[ {{ $.PrimaryKeyType }} ]{{ $.Name }}{}
+    t.Data = map[ {{ $.PrimaryKeyType }} ]{{ $.Name | camel }}{}
 }

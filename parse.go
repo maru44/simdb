@@ -22,7 +22,6 @@ func loadMaterial(fileName string) (*Material, error) {
 		if err := material.Validate(); err != nil {
 			return nil, err
 		}
-		material.ToUpperCamel()
 		return material, nil
 	default:
 		return nil, fmt.Errorf("File type '%s' not yet supported: %s", filepath.Ext(fileName), fileName)
