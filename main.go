@@ -10,12 +10,12 @@ import (
 )
 
 type commandArgs struct {
-	// package name
-	Package string `arg:"positional" default:"main"`
 	// filename generated
 	GeneratedFileName string `arg:"positional" default:"db.go"`
 	// dir name
 	Dir string `arg:"positional"`
+	// package name
+	Package string `arg:"positional" default:"main"`
 }
 
 func main() {
@@ -24,8 +24,6 @@ func main() {
 
 	viper.SetConfigName("simdb")
 	viper.AddConfigPath(".")
-
-	// viper.EnvKeyReplacer(strings.NewReplacer(".", "_"))
 
 	if err := viper.ReadInConfig(); err != nil {
 		log.Fatal("failed to read config: ", err)
@@ -44,8 +42,10 @@ func main() {
 		log.Fatal("failed to unmarshal material: ", err)
 	}
 
-	// set package name
-	m.PackageName = args.Package
+	// set package name if blank
+	if m.PackageName == "" {
+		m.PackageName = args.Package
+	}
 	// set key type
 	for _, c := range m.Columns {
 		if c.IsKey {
@@ -54,14 +54,14 @@ func main() {
 		}
 	}
 
+	if err := m.Validate(); err != nil {
+		log.Fatal("failed to validate: ", err)
+	}
+
 	outputPath := filepath.Join(pkgDir, args.Dir, args.GeneratedFileName)
 	data, err := render(outputPath, m)
 	if err != nil {
 		log.Fatal("failed to render: ", err)
-	}
-
-	if err := m.Validate(); err != nil {
-		log.Fatal("failed to validate: ", err)
 	}
 
 	_, err = os.Stat(filepath.Join(pkgDir, args.Dir))

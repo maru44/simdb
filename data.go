@@ -8,7 +8,7 @@ type (
 	Material struct {
 		Name        string           `mapstructure:"name"`
 		Columns     []ColumnMaterial `mapstructure:"columns"`
-		PackageName string
+		PackageName string           `mapstructure:"package_name"`
 		KeyType     string
 	}
 
@@ -29,6 +29,9 @@ func (m *Material) Validate() error {
 	}
 	if countPK != 1 {
 		return fmt.Errorf("Validation Error: The number of primary key must be one, but there are %d primary keys.", countPK)
+	}
+	if m.PackageName == "" {
+		return fmt.Errorf("Validation Error: Package name is required")
 	}
 	return nil
 }

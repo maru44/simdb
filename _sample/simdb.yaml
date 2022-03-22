@@ -1,4 +1,5 @@
 name: table_sample
+package: sample
 columns:
   - name: id
     type: int
