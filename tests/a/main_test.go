@@ -132,40 +132,57 @@ func TestUpdate(t *testing.T) {
 	}
 }
 
-// func TestGet(t *testing.T) {
-// 	timeBefore := time.Now().Add(-2 * time.Hour).Unix()
-// 	timeAfter := time.Now().Add(2 * time.Hour).Unix()
+func TestGet(t *testing.T) {
+	timeBefore := time.Now().Add(-2 * time.Hour).Unix()
+	timeAfter := time.Now().Add(2 * time.Hour).Unix()
 
-// 	db := tableAs{
-// 		Data: map[uint]tableA{
-// 			1: {
-// 				Name:      777777,
-// 				ExpiredAt: timeAfter,
-// 				IsExpired: false,
-// 			},
-// 			2: {
-// 				Name:      900000,
-// 				ExpiredAt: timeBefore,
-// 				IsExpired: true,
-// 			},
-// 		},
-// 	}
+	db := tableAs{
+		Data: map[uint]tableA{
+			1: {
+				Name:      777777,
+				ExpiredAt: timeAfter,
+				IsExpired: false,
+			},
+			2: {
+				Name:      900000,
+				ExpiredAt: timeBefore,
+				IsExpired: true,
+			},
+		},
+	}
 
-// 	tests := []struct {
-// 		name          string
-// 		id            uint
-// 		wantItem      tableA
-// 		wantIsNoError bool
-// 	}{
-// 		{
-// 			name:          "success: first",
-// 			id:            1,
-// 			wantItem:      db.Data[1],
-// 			wantIsNoError: true,
-// 		},
-// 		{
-// 			name: "success: second",
-// 			id:
-// 		},
-// 	}
-// }
+	tests := []struct {
+		name          string
+		id            uint
+		wantItem      tableA
+		wantIsNoError bool
+	}{
+		{
+			name:          "success: first",
+			id:            1,
+			wantItem:      db.Data[1],
+			wantIsNoError: true,
+		},
+		{
+			name:          "success: second",
+			id:            2,
+			wantItem:      db.Data[2],
+			wantIsNoError: true,
+		},
+		{
+			name:          "failed: not ex",
+			id:            3,
+			wantItem:      tableA{},
+			wantIsNoError: false,
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := db.Get(tt.id)
+			assert.Equal(t, tt.wantIsNoError, err == nil)
+			assert.Equal(t, tt.wantItem, got)
+		})
+	}
+}
