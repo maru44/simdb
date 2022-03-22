@@ -14,16 +14,16 @@ type commandArgs struct {
 	/* generated */
 
 	// filename generated
-	FileName string `arg:"positional" default:"db.go"`
+	File string `arg:"positional" default:"db.go"`
 	// dir name generated
-	Dir string `arg:"positional"`
+	Dir string
 	// package name generated
-	Package string `arg:"positional" default:"main"`
+	Package string `default:"main"`
 
 	/* config */
 
 	// config file without extensions
-	ConfigName string `arg:"positional" default:"simdb"`
+	Config string `default:"simdb"`
 }
 
 func main() {
@@ -33,7 +33,7 @@ func main() {
 	var args commandArgs
 	arg.MustParse(&args)
 
-	viper.SetConfigName(args.ConfigName)
+	viper.SetConfigName(args.Config)
 	viper.AddConfigPath(".")
 
 	if err := viper.ReadInConfig(); err != nil {
@@ -58,7 +58,7 @@ func main() {
 	if err != nil {
 		log.Fatal("failed to get package dir: ", err)
 	}
-	outputPath := filepath.Join(pkgDir, args.Dir, args.FileName)
+	outputPath := filepath.Join(pkgDir, args.Dir, args.File)
 	data, err := render(outputPath, m)
 	if err != nil {
 		log.Fatal("failed to render: ", err)
