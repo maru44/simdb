@@ -9,7 +9,7 @@ import (
 type (
     {{ $ | camel }} struct {
         {{ range $c := $.Columns -}}
-            {{ if not $c.IsKey }} {{ $c | camel }} {{ $c.Type }} {{ end }}
+            {{ $c | camel }} {{ $c.Type }}
         {{ end -}}
     }
 

@@ -41,13 +41,6 @@ func main() {
 	if m.PackageName == "" {
 		m.PackageName = args.Package
 	}
-	// set key type
-	for _, c := range m.Columns {
-		if c.IsKey {
-			m.KeyType = c.Type
-			break
-		}
-	}
 
 	if err := m.validate(); err != nil {
 		log.Fatal("failed to validate: ", err)

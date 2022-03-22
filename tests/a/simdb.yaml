@@ -1,9 +1,7 @@
 name: table_a
 is_private: true
+key_type: uint
 columns:
-  - name: id
-    type: uint
-    is_key: true
   - name: name
     type: int32
   - name: expired_at

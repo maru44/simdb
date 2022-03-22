@@ -10,14 +10,13 @@ type (
 		Columns     []ColumnMaterial `mapstructure:"columns"`
 		IsPrivate   bool             `mapstructure:"is_private"`
 		PackageName string           `mapstructure:"package_name"`
-		KeyType     string
+		KeyType     string           `mapstructure:"key_type"`
 	}
 
 	ColumnMaterial struct {
 		Name      string `mapstructure:"name"`
 		Type      string `mapstructure:"type"`
 		IsPrivate bool   `mapstructure:"is_private"`
-		IsKey     bool   `mapstructure:"is_key"`
 	}
 
 	nameAndPrivate interface {
@@ -33,19 +32,14 @@ func (m *Material) validate() error {
 	if m.PackageName == "" {
 		return fmt.Errorf("Validation Error: Package name is required")
 	}
+	if m.KeyType == "" {
+		return fmt.Errorf("Validation Error: Key type is required")
+	}
 
-	var countPK int
 	for _, c := range m.Columns {
 		if c.getName() == "" {
 			return fmt.Errorf("Validation Error: The column name is required")
 		}
-		if c.IsKey {
-			m.KeyType = c.Type
-			countPK++
-		}
-	}
-	if countPK != 1 {
-		return fmt.Errorf("Validation Error: The number of primary key must be one, but there are %d primary keys.", countPK)
 	}
 	return nil
 }
