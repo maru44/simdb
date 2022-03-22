@@ -27,8 +27,18 @@ type (
 )
 
 func (m *Material) validate() error {
+	if m.Name == "" {
+		return fmt.Errorf("Validation Error: The table name is required")
+	}
+	if m.PackageName == "" {
+		return fmt.Errorf("Validation Error: Package name is required")
+	}
+
 	var countPK int
 	for _, c := range m.Columns {
+		if c.getName() == "" {
+			return fmt.Errorf("Validation Error: The column name is required")
+		}
 		if c.IsKey {
 			m.KeyType = c.Type
 			countPK++
@@ -36,9 +46,6 @@ func (m *Material) validate() error {
 	}
 	if countPK != 1 {
 		return fmt.Errorf("Validation Error: The number of primary key must be one, but there are %d primary keys.", countPK)
-	}
-	if m.PackageName == "" {
-		return fmt.Errorf("Validation Error: Package name is required")
 	}
 	return nil
 }
