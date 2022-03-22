@@ -130,22 +130,25 @@ func TestUpdate(t *testing.T) {
 	}
 }
 
-func TestGet(t *testing.T) {
+func TestGetAndLoadAndExists(t *testing.T) {
 	timeBefore := time.Now().Add(-2 * time.Hour).Unix()
 	timeAfter := time.Now().Add(2 * time.Hour).Unix()
 
+	d1 := tableA{
+		Name:      777777,
+		ExpiredAt: timeAfter,
+		IsExpired: false,
+	}
+	d2 := tableA{
+		Name:      900000,
+		ExpiredAt: timeBefore,
+		IsExpired: true,
+	}
+
 	db := tableAs{
 		data: map[uint]tableA{
-			1: {
-				Name:      777777,
-				ExpiredAt: timeAfter,
-				IsExpired: false,
-			},
-			2: {
-				Name:      900000,
-				ExpiredAt: timeBefore,
-				IsExpired: true,
-			},
+			1: d1,
+			2: d2,
 		},
 	}
 
@@ -154,24 +157,36 @@ func TestGet(t *testing.T) {
 		id            uint
 		wantItem      tableA
 		wantIsNoError bool
+		wantLoadItem  tableA
+		wantLoadOK    bool
+		wantExists    bool
 	}{
 		{
 			name:          "success: first",
 			id:            1,
-			wantItem:      db.data[1],
+			wantItem:      d1,
 			wantIsNoError: true,
+			wantLoadItem:  d1,
+			wantLoadOK:    true,
+			wantExists:    true,
 		},
 		{
 			name:          "success: second",
 			id:            2,
-			wantItem:      db.data[2],
+			wantItem:      d2,
 			wantIsNoError: true,
+			wantLoadItem:  d2,
+			wantLoadOK:    true,
+			wantExists:    true,
 		},
 		{
 			name:          "failed: not ex",
 			id:            3,
 			wantItem:      tableA{},
 			wantIsNoError: false,
+			wantLoadItem:  tableA{},
+			wantLoadOK:    false,
+			wantExists:    false,
 		},
 	}
 
@@ -181,6 +196,11 @@ func TestGet(t *testing.T) {
 			got, err := db.Get(tt.id)
 			assert.Equal(t, tt.wantIsNoError, err == nil)
 			assert.Equal(t, tt.wantItem, got)
+			gotLoad, gotOK := db.Load(tt.id)
+			assert.Equal(t, tt.wantLoadItem, gotLoad)
+			assert.Equal(t, tt.wantLoadOK, gotOK)
+			gotEx := db.Exists(tt.id)
+			assert.Equal(t, tt.wantExists, gotEx)
 		})
 	}
 }
