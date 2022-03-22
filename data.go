@@ -5,20 +5,31 @@ import (
 )
 
 type (
+	// material of table
 	Material struct {
-		Name        string           `mapstructure:"name"`
-		Columns     []ColumnMaterial `mapstructure:"columns"`
-		IsPrivate   bool             `mapstructure:"is_private"`
-		PackageName string           `mapstructure:"package_name"`
-		KeyType     string           `mapstructure:"key_type"`
+		// table name: required
+		Name string `mapstructure:"name"`
+		// table struct should be private or not
+		IsPrivate bool `mapstructure:"is_private"`
+		// package name of generated file name: required
+		PackageName string `mapstructure:"package_name"`
+		// type of key (this table's primary and unique key): required
+		KeyType string `mapstructure:"key_type"`
+		// columns
+		Columns []ColumnMaterial `mapstructure:"columns"`
 	}
 
+	// material of column
 	ColumnMaterial struct {
-		Name      string `mapstructure:"name"`
-		Type      string `mapstructure:"type"`
-		IsPrivate bool   `mapstructure:"is_private"`
+		// column name: required
+		Name string `mapstructure:"name"`
+		// type of column: required
+		Type string `mapstructure:"type"`
+		// the field should be private or not
+		IsPrivate bool `mapstructure:"is_private"`
 	}
 
+	// interface have name and isPrivate
 	nameAndPrivate interface {
 		getName() string
 		getPrivate() bool

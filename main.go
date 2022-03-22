@@ -9,17 +9,20 @@ import (
 	"github.com/spf13/viper"
 )
 
+// command positional arguments
 type commandArgs struct {
 	/* generated */
+
 	// filename generated
-	GeneratedFileName string `arg:"positional" default:"db.go"`
-	// dir name
+	FileName string `arg:"positional" default:"db.go"`
+	// dir name generated
 	Dir string `arg:"positional"`
-	// package name
+	// package name generated
 	Package string `arg:"positional" default:"main"`
 
 	/* config */
-	// config file
+
+	// config file without extensions
 	ConfigName string `arg:"positional" default:"simdb"`
 }
 
@@ -55,7 +58,7 @@ func main() {
 	if err != nil {
 		log.Fatal("failed to get package dir: ", err)
 	}
-	outputPath := filepath.Join(pkgDir, args.Dir, args.GeneratedFileName)
+	outputPath := filepath.Join(pkgDir, args.Dir, args.FileName)
 	data, err := render(outputPath, m)
 	if err != nil {
 		log.Fatal("failed to render: ", err)
