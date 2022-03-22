@@ -32,6 +32,13 @@ func (t *tableAs) List() map[uint]tableA {
 	return t.data
 }
 
+func (t *tableAs) Exists(id uint) bool {
+	t.RLock()
+	defer t.RUnlock()
+	_, ok := t.data[id]
+	return ok
+}
+
 func (t *tableAs) Get(id uint) (tableA, error) {
 	t.RLock()
 	defer t.RUnlock()

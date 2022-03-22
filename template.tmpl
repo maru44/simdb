@@ -31,6 +31,13 @@ func (t *{{ $ | camel }}s) List() map[ {{ $.KeyType }} ]{{ $ | camel }} {
     return t.data
 }
 
+func (t *{{ $ |camel }}s) Exists(id {{ $.KeyType }}) bool {
+    t.RLock()
+    defer t.RUnlock()
+    _, ok := t.data[id]
+    return ok
+}
+
 func (t *{{ $ | camel }}s) Get(id {{ $.KeyType }} ) ({{ $ | camel }}, error) {
     t.RLock()
     defer t.RUnlock()

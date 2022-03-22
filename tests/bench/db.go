@@ -33,6 +33,13 @@ func (t *benchs) List() map[int]bench {
 	return t.data
 }
 
+func (t *benchs) Exists(id int) bool {
+	t.RLock()
+	defer t.RUnlock()
+	_, ok := t.data[id]
+	return ok
+}
+
 func (t *benchs) Get(id int) (bench, error) {
 	t.RLock()
 	defer t.RUnlock()
