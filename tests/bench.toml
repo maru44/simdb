@@ -11,3 +11,6 @@ type = "string"
 name = "age"
 type = "uint"
 is_private = true
+[[columns]]
+name = "is_valid"
+type = "bool"

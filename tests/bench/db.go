@@ -9,9 +9,10 @@ import (
 
 type (
 	bench struct {
-		Name  string
-		Email string
-		age   uint
+		Name    string
+		Email   string
+		age     uint
+		IsValid bool
 	}
 
 	benchs struct {
