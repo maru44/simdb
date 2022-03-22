@@ -3,7 +3,7 @@
 package main
 
 import (
-	"errors"
+	"fmt"
 	"sync"
 )
 
@@ -25,7 +25,7 @@ func (t *tableAs) Get(id uint) (tableA, error) {
 	defer t.RUnlock()
 	v, ok := t.Data[id]
 	if !ok {
-		return tableA{}, errors.New("Not Exists")
+		return tableA{}, fmt.Errorf("Not Exists: %v", id)
 	}
 	return v, nil
 }
@@ -34,7 +34,7 @@ func (t *tableAs) Insert(id uint, value tableA) error {
 	t.Lock()
 	defer t.Unlock()
 	if _, ok := t.Data[id]; ok {
-		return errors.New("Duplicate Entry")
+		return fmt.Errorf("Duplicate Entry: %v", id)
 	}
 	t.Data[id] = value
 	return nil
@@ -45,7 +45,7 @@ func (t *tableAs) BulkInsert(values map[uint]tableA) error {
 	defer t.Unlock()
 	for id, value := range values {
 		if _, ok := t.Data[id]; ok {
-			return errors.New("Duplicate Entry")
+			return fmt.Errorf("Duplicate Entry: %v", id)
 		}
 		t.Data[id] = value
 	}
@@ -56,7 +56,7 @@ func (t *tableAs) Update(id uint, value tableA) error {
 	t.Lock()
 	defer t.Unlock()
 	if _, ok := t.Data[id]; !ok {
-		return errors.New("Not Exists")
+		return fmt.Errorf("Does not exists: %v", id)
 	}
 	t.Data[id] = value
 	return nil
