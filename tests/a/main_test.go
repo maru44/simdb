@@ -185,20 +185,49 @@ func TestGet(t *testing.T) {
 	}
 }
 
-// func TestBulkInsert(t *testing.T) {
-// 	db := tableAs{}
+func TestBulkInsert(t *testing.T) {
+	db := NewTableAs()
 
-// 	tests := []struct {
-// 		name        string
-// 		inserts     []tableA
-// 		wantItems   []tableA
-// 		wantIsError bool
-// 	}{
-// 		{
-// 			name: "success: ",
-// 			inserts: tableAs{
-// 				{},
-// 			},
-// 		},
-// 	}
-// }
+	tests := []struct {
+		name          string
+		inserts       map[uint]tableA
+		wantItems     map[uint]tableA
+		wantIsNoError bool
+	}{
+		{
+			name: "success: ",
+			inserts: map[uint]tableA{
+				1: {
+					Name: 1,
+				},
+				2: {
+					Name: 2,
+				},
+				3: {
+					Name: 3,
+				},
+			},
+			wantIsNoError: true,
+			wantItems: map[uint]tableA{
+				1: {
+					Name: 1,
+				},
+				2: {
+					Name: 2,
+				},
+				3: {
+					Name: 3,
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			err := db.BulkInsert(tt.inserts)
+			assert.Equal(t, tt.wantIsNoError, err == nil)
+			assert.Equal(t, tt.wantItems, db.Data)
+		})
+	}
+}
