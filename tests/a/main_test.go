@@ -66,5 +66,68 @@ func TestInsert(t *testing.T) {
 }
 
 func TestUpdate(t *testing.T) {
+	db := tableAs{
+		Data: map[uint]tableA{
+			1: {
+				Name:      777777,
+				ExpiredAt: time.Now().Add(2 * time.Hour).Unix(),
+				IsExpired: false,
+			},
+		},
+	}
 
+	tim := time.Now().Add(3 * time.Hour).Unix()
+
+	tests := []struct {
+		name       string
+		updateID   uint
+		updateItem tableA
+		wantNoErr  bool
+		wantItems  map[uint]tableA
+	}{
+		{
+			name:     "success: first",
+			updateID: uint(1),
+			updateItem: tableA{
+				Name:      888888,
+				ExpiredAt: tim,
+				IsExpired: false,
+			},
+			wantNoErr: true,
+			wantItems: map[uint]tableA{
+				1: {
+					Name:      888888,
+					ExpiredAt: tim,
+					IsExpired: false,
+				},
+			},
+		},
+		{
+			name:     "failed: key does not exist",
+			updateID: uint(3),
+			updateItem: tableA{
+				Name:      777777,
+				ExpiredAt: time.Now().Add(2 * time.Hour).Unix(),
+				IsExpired: false,
+			},
+			wantNoErr: false,
+			wantItems: map[uint]tableA{
+				1: {
+					Name:      888888,
+					ExpiredAt: tim,
+					IsExpired: false,
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			err := db.Update(tt.updateID, tt.updateItem)
+			assert.Equal(t, tt.wantNoErr, err == nil)
+
+			assert.Equal(t, tt.wantItems, db.Data)
+		})
+	}
 }
