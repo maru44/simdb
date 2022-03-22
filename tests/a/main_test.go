@@ -20,7 +20,7 @@ func TestInsert(t *testing.T) {
 		wantItems  map[uint]TableA
 	}{
 		{
-			name:     "first success",
+			name:     "success: first",
 			insertID: uint(1),
 			insertItem: TableA{
 				Name:      777777,
@@ -63,4 +63,8 @@ func TestInsert(t *testing.T) {
 			assert.Equal(t, tt.wantItems, db.Data)
 		})
 	}
+}
+
+func TestUpdate(t *testing.T) {
+
 }

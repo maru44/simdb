@@ -6,16 +6,16 @@ import (
 
 type (
 	Material struct {
-		Name        string           `yaml:"name"`
-		Columns     []ColumnMaterial `yaml:"columns"`
+		Name        string           `mapstructure:"name"`
+		Columns     []ColumnMaterial `mapstructure:"columns"`
 		PackageName string
 		KeyType     string
 	}
 
 	ColumnMaterial struct {
-		Name  string `yaml:"name"`
-		Type  string `yaml:"type"`
-		IsKey bool   `yaml:"is_key"`
+		Name  string `mapstructure:"name"`
+		Type  string `mapstructure:"type"`
+		IsKey bool   `mapstructure:"is_key"`
 	}
 )
 
