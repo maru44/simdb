@@ -14,27 +14,27 @@ type (
     }
 
     {{ $ | camel }}s struct {
-        Data map[ {{ $.KeyType }} ]{{ $ | camel }}
+        data map[ {{ $.KeyType }} ]{{ $ | camel }}
         sync.RWMutex
     }
 )
 
 func New{{ $.Name | upperCamel }}s() {{ $ | camel }}s {
     return {{ $ | camel }}s{
-        Data: map[ {{ $.KeyType }} ]{{ $ | camel }}{},
+        data: map[ {{ $.KeyType }} ]{{ $ | camel }}{},
     }
 }
 
 func (t *{{ $ | camel }}s) List() map[ {{ $.KeyType }} ]{{ $ | camel }} {
     t.RLock()
     defer t.RUnlock()
-    return t.Data
+    return t.data
 }
 
 func (t *{{ $ | camel }}s) Get(id {{ $.KeyType }} ) ({{ $ | camel }}, error) {
     t.RLock()
     defer t.RUnlock()
-    v, ok := t.Data[id]
+    v, ok := t.data[id]
     if !ok {
         return {{ $ | camel }}{}, fmt.Errorf("Not Exists: %v", id)
     }
@@ -44,10 +44,10 @@ func (t *{{ $ | camel }}s) Get(id {{ $.KeyType }} ) ({{ $ | camel }}, error) {
 func (t *{{ $ | camel }}s) Insert(id {{ $.KeyType }}, value {{ $ | camel }} ) error {
     t.Lock()
     defer t.Unlock()
-    if _, ok := t.Data[id]; ok {
+    if _, ok := t.data[id]; ok {
         return fmt.Errorf("Duplicate Entry: %v", id)
     }
-    t.Data[id] = value
+    t.data[id] = value
     return nil
 }
 
@@ -55,12 +55,12 @@ func (t *{{ $ | camel }}s) BulkInsert(values map[{{ $.KeyType }}]{{ $ | camel }}
     t.Lock()
     defer t.Unlock()
     for id := range values {
-        if _, ok := t.Data[id]; ok {
+        if _, ok := t.data[id]; ok {
             return fmt.Errorf("Duplicate Entry: %v", id)
         }
     }
     for id, value := range values {
-        t.Data[id] = value
+        t.data[id] = value
     }
     return nil
 }
@@ -68,35 +68,43 @@ func (t *{{ $ | camel }}s) BulkInsert(values map[{{ $.KeyType }}]{{ $ | camel }}
 func (t *{{ $ | camel }}s) Update(id {{ $.KeyType }}, value {{ $ | camel }} ) error {
     t.Lock()
     defer t.Unlock()
-    if _, ok := t.Data[id]; !ok {
+    if _, ok := t.data[id]; !ok {
         return fmt.Errorf("Does not exists: %v", id)
     }
-    t.Data[id] = value
+    t.data[id] = value
     return nil
 }
 
 func (t *{{ $ | camel }}s) Upsert(id {{ $.KeyType }}, value {{ $ | camel }} ) {
     t.Lock()
     defer t.Unlock()
-    t.Data[id] = value
+    t.data[id] = value
 }
 
 func (t *{{ $ | camel }}s) BulkUpsert(values  map[{{ $.KeyType }}]{{ $ | camel }}) {
     t.Lock()
     defer t.Unlock()
     for id, value := range values {
-        t.Data[id] = value
+        t.data[id] = value
     }
 }
 
 func (t *{{ $ | camel }}s) Delete(id {{ $.KeyType }}) {
     t.Lock()
     defer t.Unlock()
-    delete(t.Data, id)
+    delete(t.data, id)
+}
+
+func (t *{{ $ | camel }}s) BulkDelete(ids []{{ $.KeyType }}) {
+    t.Lock()
+    defer t.Unlock()
+    for _, id := range ids {
+        delete(t.data, id)
+    }
 }
 
 func (t *{{ $ | camel }}s) Truncate() {
     t.Lock()
     defer t.Unlock()
-    t.Data = map[ {{ $.KeyType }} ]{{ $ | camel }}{}
+    t.data = map[ {{ $.KeyType }} ]{{ $ | camel }}{}
 }

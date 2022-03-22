@@ -16,27 +16,27 @@ type (
 	}
 
 	benchs struct {
-		Data map[string]bench
+		data map[string]bench
 		sync.RWMutex
 	}
 )
 
 func NewBenchs() benchs {
 	return benchs{
-		Data: map[string]bench{},
+		data: map[string]bench{},
 	}
 }
 
 func (t *benchs) List() map[string]bench {
 	t.RLock()
 	defer t.RUnlock()
-	return t.Data
+	return t.data
 }
 
 func (t *benchs) Get(id string) (bench, error) {
 	t.RLock()
 	defer t.RUnlock()
-	v, ok := t.Data[id]
+	v, ok := t.data[id]
 	if !ok {
 		return bench{}, fmt.Errorf("Not Exists: %v", id)
 	}
@@ -46,10 +46,10 @@ func (t *benchs) Get(id string) (bench, error) {
 func (t *benchs) Insert(id string, value bench) error {
 	t.Lock()
 	defer t.Unlock()
-	if _, ok := t.Data[id]; ok {
+	if _, ok := t.data[id]; ok {
 		return fmt.Errorf("Duplicate Entry: %v", id)
 	}
-	t.Data[id] = value
+	t.data[id] = value
 	return nil
 }
 
@@ -57,12 +57,12 @@ func (t *benchs) BulkInsert(values map[string]bench) error {
 	t.Lock()
 	defer t.Unlock()
 	for id := range values {
-		if _, ok := t.Data[id]; ok {
+		if _, ok := t.data[id]; ok {
 			return fmt.Errorf("Duplicate Entry: %v", id)
 		}
 	}
 	for id, value := range values {
-		t.Data[id] = value
+		t.data[id] = value
 	}
 	return nil
 }
@@ -70,35 +70,43 @@ func (t *benchs) BulkInsert(values map[string]bench) error {
 func (t *benchs) Update(id string, value bench) error {
 	t.Lock()
 	defer t.Unlock()
-	if _, ok := t.Data[id]; !ok {
+	if _, ok := t.data[id]; !ok {
 		return fmt.Errorf("Does not exists: %v", id)
 	}
-	t.Data[id] = value
+	t.data[id] = value
 	return nil
 }
 
 func (t *benchs) Upsert(id string, value bench) {
 	t.Lock()
 	defer t.Unlock()
-	t.Data[id] = value
+	t.data[id] = value
 }
 
 func (t *benchs) BulkUpsert(values map[string]bench) {
 	t.Lock()
 	defer t.Unlock()
 	for id, value := range values {
-		t.Data[id] = value
+		t.data[id] = value
 	}
 }
 
 func (t *benchs) Delete(id string) {
 	t.Lock()
 	defer t.Unlock()
-	delete(t.Data, id)
+	delete(t.data, id)
+}
+
+func (t *benchs) BulkDelete(ids []string) {
+	t.Lock()
+	defer t.Unlock()
+	for _, id := range ids {
+		delete(t.data, id)
+	}
 }
 
 func (t *benchs) Truncate() {
 	t.Lock()
 	defer t.Unlock()
-	t.Data = map[string]bench{}
+	t.data = map[string]bench{}
 }

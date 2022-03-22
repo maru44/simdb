@@ -65,7 +65,7 @@ func TestInsert(t *testing.T) {
 
 func TestUpdate(t *testing.T) {
 	db := tableAs{
-		Data: map[uint]tableA{
+		data: map[uint]tableA{
 			1: {
 				Name:      777777,
 				ExpiredAt: time.Now().Add(2 * time.Hour).Unix(),
@@ -135,7 +135,7 @@ func TestGet(t *testing.T) {
 	timeAfter := time.Now().Add(2 * time.Hour).Unix()
 
 	db := tableAs{
-		Data: map[uint]tableA{
+		data: map[uint]tableA{
 			1: {
 				Name:      777777,
 				ExpiredAt: timeAfter,
@@ -158,13 +158,13 @@ func TestGet(t *testing.T) {
 		{
 			name:          "success: first",
 			id:            1,
-			wantItem:      db.Data[1],
+			wantItem:      db.data[1],
 			wantIsNoError: true,
 		},
 		{
 			name:          "success: second",
 			id:            2,
-			wantItem:      db.Data[2],
+			wantItem:      db.data[2],
 			wantIsNoError: true,
 		},
 		{
@@ -300,7 +300,7 @@ func TestUpsert(t *testing.T) {
 
 func TestDelete(t *testing.T) {
 	db := tableAs{
-		Data: map[uint]tableA{
+		data: map[uint]tableA{
 			1: {Name: 1},
 			2: {Name: 2},
 		},
