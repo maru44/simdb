@@ -1,0 +1,13 @@
+name = "bench"
+is_private = true
+key_type = "string"
+[[columns]]
+name = "name"
+type = "string"
+[[columns]]
+name = "email"
+type = "string"
+[[columns]]
+name = "age"
+type = "uint"
+is_private = true

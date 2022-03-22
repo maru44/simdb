@@ -1,4 +1,4 @@
-.PHONY: gcflags
+.PHONY: gcflags gen test
 
 gcflags:
 	go test -gcflags '-m'

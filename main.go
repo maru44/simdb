@@ -10,19 +10,27 @@ import (
 )
 
 type commandArgs struct {
+	/* generated */
 	// filename generated
 	GeneratedFileName string `arg:"positional" default:"db.go"`
 	// dir name
 	Dir string `arg:"positional"`
 	// package name
 	Package string `arg:"positional" default:"main"`
+
+	/* config */
+	// config file
+	ConfigName string `arg:"positional" default:"simdb"`
 }
 
 func main() {
 	// read env first
 	viper.AutomaticEnv()
 
-	viper.SetConfigName("simdb")
+	var args commandArgs
+	arg.MustParse(&args)
+
+	viper.SetConfigName(args.ConfigName)
 	viper.AddConfigPath(".")
 
 	if err := viper.ReadInConfig(); err != nil {
@@ -33,9 +41,6 @@ func main() {
 	if err := viper.Unmarshal(&m); err != nil {
 		log.Fatal("failed to unmarshal material: ", err)
 	}
-
-	var args commandArgs
-	arg.MustParse(&args)
 
 	// set package name if blank
 	if m.PackageName == "" {

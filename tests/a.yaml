@@ -1,0 +1,10 @@
+name: table_a
+is_private: true
+key_type: uint
+columns:
+  - name: name
+    type: int32
+  - name: expired_at
+    type: int64
+  - name: isExpired
+    type: bool
