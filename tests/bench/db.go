@@ -21,6 +21,10 @@ type (
 	}
 )
 
+func NewBenchs() benchs {
+	return benchs{}
+}
+
 func (t *benchs) Get(id string) (bench, error) {
 	t.RLock()
 	defer t.RUnlock()

@@ -20,6 +20,10 @@ type (
 	}
 )
 
+func NewTableAs() tableAs {
+	return tableAs{}
+}
+
 func (t *tableAs) Get(id uint) (tableA, error) {
 	t.RLock()
 	defer t.RUnlock()

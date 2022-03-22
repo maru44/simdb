@@ -186,3 +186,21 @@ func TestGet(t *testing.T) {
 		})
 	}
 }
+
+// func TestBulkInsert(t *testing.T) {
+// 	db := tableAs{}
+
+// 	tests := []struct {
+// 		name        string
+// 		inserts     []tableA
+// 		wantItems   []tableA
+// 		wantIsError bool
+// 	}{
+// 		{
+// 			name: "success: ",
+// 			inserts: tableAs{
+// 				{},
+// 			},
+// 		},
+// 	}
+// }
