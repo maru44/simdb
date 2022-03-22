@@ -49,7 +49,7 @@ func main() {
 		}
 	}
 
-	if err := m.Validate(); err != nil {
+	if err := m.validate(); err != nil {
 		log.Fatal("failed to validate: ", err)
 	}
 

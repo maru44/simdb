@@ -21,12 +21,12 @@ type (
 	}
 
 	nameAndPrivate interface {
-		GetName() string
-		GetPrivate() bool
+		getName() string
+		getPrivate() bool
 	}
 )
 
-func (m *Material) Validate() error {
+func (m *Material) validate() error {
 	var countPK int
 	for _, c := range m.Columns {
 		if c.IsKey {
@@ -43,16 +43,16 @@ func (m *Material) Validate() error {
 	return nil
 }
 
-func (m *Material) GetName() string {
+func (m *Material) getName() string {
 	return m.Name
 }
-func (m *Material) GetPrivate() bool {
+func (m *Material) getPrivate() bool {
 	return m.IsPrivate
 }
 
-func (c *ColumnMaterial) GetName() string {
+func (c *ColumnMaterial) getName() string {
 	return c.Name
 }
-func (c *ColumnMaterial) GetPrivate() bool {
+func (c *ColumnMaterial) getPrivate() bool {
 	return c.IsPrivate
 }

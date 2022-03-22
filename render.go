@@ -41,11 +41,11 @@ func render(filePath string, m *Material) ([]byte, error) {
 }
 
 func camelName(m nameAndPrivate) string {
-	s := m.GetName()
+	s := m.getName()
 	if len(s) == 0 {
 		return s
 	}
-	if m.GetPrivate() {
+	if m.getPrivate() {
 		return strcase.LowerCamelCase(s)
 	}
 	return strcase.UpperCamelCase(s)
