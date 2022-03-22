@@ -37,7 +37,7 @@ func (m *Material) validate() error {
 	}
 
 	for _, c := range m.Columns {
-		if c.getName() == "" {
+		if c.Name == "" {
 			return fmt.Errorf("Validation Error: The column name is required")
 		}
 	}
