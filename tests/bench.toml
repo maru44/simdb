@@ -1,6 +1,6 @@
 name = "bench"
 is_private = true
-key_type = "string"
+key_type = "int"
 [[columns]]
 name = "name"
 type = "string"

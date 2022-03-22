@@ -5,3 +5,6 @@ test:
 
 gen:
 	go generate ./...
+
+bench:
+	go test -bench . -benchmem ./tests/bench
