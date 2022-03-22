@@ -21,7 +21,9 @@ type (
 )
 
 func NewTableAs() tableAs {
-	return tableAs{}
+	return tableAs{
+		Data: map[uint]tableA{},
+	}
 }
 
 func (t *tableAs) Get(id uint) (tableA, error) {

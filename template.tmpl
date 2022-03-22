@@ -20,7 +20,9 @@ type (
 )
 
 func New{{ $.Name | upperCamel }}s() {{ $ | camel }}s {
-    return {{ $ | camel }}s{}
+    return {{ $ | camel }}s{
+        Data: map[ {{ $.KeyType }} ]{{ $ | camel }}{},
+    }
 }
 
 func (t *{{ $ | camel }}s) Get(id {{ $.KeyType }} ) ({{ $ | camel }}, error) {

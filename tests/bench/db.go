@@ -22,7 +22,9 @@ type (
 )
 
 func NewBenchs() benchs {
-	return benchs{}
+	return benchs{
+		Data: map[string]bench{},
+	}
 }
 
 func (t *benchs) Get(id string) (bench, error) {

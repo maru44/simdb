@@ -8,9 +8,7 @@ import (
 )
 
 func TestInsert(t *testing.T) {
-	db := tableAs{
-		Data: map[uint]tableA{},
-	}
+	db := NewTableAs()
 
 	tests := []struct {
 		name       string
