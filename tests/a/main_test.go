@@ -297,3 +297,41 @@ func TestUpsert(t *testing.T) {
 		})
 	}
 }
+
+func TestDelete(t *testing.T) {
+	db := tableAs{
+		Data: map[uint]tableA{
+			1: {Name: 1},
+			2: {Name: 2},
+		},
+	}
+
+	tests := []struct {
+		name      string
+		id        uint
+		wantItems map[uint]tableA
+	}{
+		{
+			name: "success: ",
+			id:   1,
+			wantItems: map[uint]tableA{
+				2: {Name: 2},
+			},
+		},
+		{
+			name: "success: even if key does not ex",
+			id:   3,
+			wantItems: map[uint]tableA{
+				2: {Name: 2},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			db.Delete(tt.id)
+			assert.Equal(t, tt.wantItems, db.List())
+		})
+	}
+}
