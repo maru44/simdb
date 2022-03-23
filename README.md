@@ -1,5 +1,9 @@
 # simdb
 
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/maru44/scheman/blob/master/LICENSE)
+![ActionsCI](https://github.com/maru44/simdb/workflows/Test%20Lint/badge.svg)
+[![Go Report Card](https://goreportcard.com/badge/github.com/maru44/simdb)](https://goreportcard.com/report/github.com/maru44/simdb)
+
 A simple IMDB (in-memory database) generator for go.
 We generate type-safe and thread-safe IMDB.
 
@@ -26,7 +30,7 @@ Basic Informations.
 | type       | type of column         | string | requried |
 | is_private | whether private or not | bool   |          |
 
-#### Config
+#### Setting args
 
 | arg     | explanation                   | positional or optional |                                                       |
 | ------- | ----------------------------- | ---------------------- | ----------------------------------------------------- |
