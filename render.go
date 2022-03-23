@@ -21,7 +21,7 @@ func render(filePath string, m *Material) ([]byte, error) {
 
 	tmpl, err := template.New("").Funcs(funcMap).Parse(renderTemplate)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse tempalte: %w", err)
+		return nil, fmt.Errorf("failed to parse template: %w", err)
 	}
 
 	var buf bytes.Buffer
