@@ -38,21 +38,21 @@ func (t *{{ $ |camel }}s) Exists(id {{ $.KeyType }}) bool {
     return ok
 }
 
-func (t *{{ $ | camel }}s) Get(id {{ $.KeyType }} ) ({{ $ | camel }}, error) {
+func (t *{{ $ | camel }}s) Get(id {{ $.KeyType }} ) (*{{ $ | camel }}, error) {
     t.RLock()
     defer t.RUnlock()
     v, ok := t.data[id]
     if !ok {
-        return {{ $ | camel }}{}, fmt.Errorf("Not Exists: %v", id)
+        return nil, fmt.Errorf("Not Exists: %v", id)
     }
-    return v, nil
+    return &v, nil
 }
 
-func (t *{{ $ | camel }}s) Load(id {{ $.KeyType }}) ({{ $ | camel }}, bool) {
+func (t *{{ $ | camel }}s) Load(id {{ $.KeyType }}) (*{{ $ | camel }}, bool) {
     t.RLock()
     defer t.RUnlock()
-    value, ok := t.data[id]
-    return value, ok
+    v, ok := t.data[id]
+    return &v, ok
 }
 
 func (t *{{ $ | camel }}s) Insert(id {{ $.KeyType }}, value {{ $ | camel }} ) error {

@@ -39,21 +39,21 @@ func (t *tableAs) Exists(id uint) bool {
 	return ok
 }
 
-func (t *tableAs) Get(id uint) (tableA, error) {
+func (t *tableAs) Get(id uint) (*tableA, error) {
 	t.RLock()
 	defer t.RUnlock()
 	v, ok := t.data[id]
 	if !ok {
-		return tableA{}, fmt.Errorf("Not Exists: %v", id)
+		return nil, fmt.Errorf("Not Exists: %v", id)
 	}
-	return v, nil
+	return &v, nil
 }
 
-func (t *tableAs) Load(id uint) (tableA, bool) {
+func (t *tableAs) Load(id uint) (*tableA, bool) {
 	t.RLock()
 	defer t.RUnlock()
-	value, ok := t.data[id]
-	return value, ok
+	v, ok := t.data[id]
+	return &v, ok
 }
 
 func (t *tableAs) Insert(id uint, value tableA) error {
