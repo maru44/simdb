@@ -38,7 +38,22 @@ func BenchmarkGet(b *testing.B) {
 	}
 }
 
-func BenchmarkGet_SyncMap(b *testing.B) {
+func BenchmarkLoad(b *testing.B) {
+	db := NewBenchs()
+	value := bench{}
+	for i := 0; i < b.N; i++ {
+		err := db.Insert(i, value)
+		if err != nil {
+			b.Fatal(err)
+		}
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_, _ = db.Load(i)
+	}
+}
+
+func BenchmarkLoad_SyncMap(b *testing.B) {
 	db := sync.Map{}
 	value := bench{}
 	for i := 0; i < b.N; i++ {
@@ -48,5 +63,32 @@ func BenchmarkGet_SyncMap(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		val, _ := db.Load(i)
 		_ = val.(bench)
+	}
+}
+
+func BenchmarkDelete(b *testing.B) {
+	db := NewBenchs()
+	value := bench{}
+	for i := 0; i < b.N; i++ {
+		err := db.Insert(i, value)
+		if err != nil {
+			b.Fatal(err)
+		}
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		db.Delete(i)
+	}
+}
+
+func BenchmarkDelete_SyncMap(b *testing.B) {
+	db := sync.Map{}
+	value := bench{}
+	for i := 0; i < b.N; i++ {
+		db.Store(i, value)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		db.Delete(i)
 	}
 }

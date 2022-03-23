@@ -1,4 +1,4 @@
-.PHONY: test gen
+.PHONY: test gen bench
 
 test:
 	go test ./...
