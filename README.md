@@ -5,6 +5,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/maru44/simdb)](https://goreportcard.com/report/github.com/maru44/simdb)
 
 A simple IMDB (in-memory database) generator for go.
+
 We generate type-safe and thread-safe IMDB.
 
 We generate table with columns and also implement some methods like `Get`, `Insert`, `Update`, `Delete`, etc...
