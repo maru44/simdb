@@ -155,36 +155,36 @@ func TestGetAndLoadAndExists(t *testing.T) {
 	tests := []struct {
 		name          string
 		id            uint
-		wantItem      *tableA
+		wantItem      tableA
 		wantIsNoError bool
-		wantLoadItem  *tableA
+		wantLoadItem  tableA
 		wantLoadOK    bool
 		wantExists    bool
 	}{
 		{
 			name:          "success: first",
 			id:            1,
-			wantItem:      &d1,
+			wantItem:      d1,
 			wantIsNoError: true,
-			wantLoadItem:  &d1,
+			wantLoadItem:  d1,
 			wantLoadOK:    true,
 			wantExists:    true,
 		},
 		{
 			name:          "success: second",
 			id:            2,
-			wantItem:      &d2,
+			wantItem:      d2,
 			wantIsNoError: true,
-			wantLoadItem:  &d2,
+			wantLoadItem:  d2,
 			wantLoadOK:    true,
 			wantExists:    true,
 		},
 		{
 			name:          "failed: not ex",
 			id:            3,
-			wantItem:      nil,
+			wantItem:      tableA{},
 			wantIsNoError: false,
-			wantLoadItem:  nil,
+			wantLoadItem:  tableA{},
 			wantLoadOK:    false,
 			wantExists:    false,
 		},

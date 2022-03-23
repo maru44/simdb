@@ -40,24 +40,21 @@ func (t *benchs) Exists(id int) bool {
 	return ok
 }
 
-func (t *benchs) Get(id int) (*bench, error) {
+func (t *benchs) Get(id int) (bench, error) {
 	t.RLock()
 	defer t.RUnlock()
 	v, ok := t.data[id]
 	if !ok {
-		return nil, fmt.Errorf("Not Exists: %v", id)
+		return bench{}, fmt.Errorf("Not Exists: %v", id)
 	}
-	return &v, nil
+	return v, nil
 }
 
-func (t *benchs) Load(id int) (*bench, bool) {
+func (t *benchs) Load(id int) (bench, bool) {
 	t.RLock()
 	defer t.RUnlock()
-	v, ok := t.data[id]
-	if !ok {
-		return nil, ok
-	}
-	return &v, ok
+	value, ok := t.data[id]
+	return value, ok
 }
 
 func (t *benchs) Insert(id int, value bench) error {
