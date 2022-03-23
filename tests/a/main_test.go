@@ -355,3 +355,50 @@ func TestDelete(t *testing.T) {
 		})
 	}
 }
+
+func TestMutex(t *testing.T) {
+	n := uint(10000)
+	db := NewTableAs()
+
+	var errs []error
+	ch1 := make(chan bool)
+	ch2 := make(chan bool)
+	ch3 := make(chan bool)
+
+	go func() {
+		for i := uint(0); i < n; i++ {
+			err := db.Insert(i, tableA{})
+			if err != nil {
+				errs = append(errs, err)
+			}
+		}
+		ch1 <- true
+	}()
+
+	go func() {
+		for i := uint(n); i < n*2; i++ {
+			err := db.Insert(i, tableA{})
+			if err != nil {
+				errs = append(errs, err)
+			}
+		}
+		ch2 <- true
+	}()
+
+	go func() {
+		for i := uint(n * 2); i < n*3; i++ {
+			err := db.Insert(i, tableA{})
+			if err != nil {
+				errs = append(errs, err)
+			}
+		}
+		ch3 <- true
+	}()
+
+	<-ch1
+	<-ch2
+	<-ch3
+
+	assert.Equal(t, 30000, len(db.List()))
+	assert.Equal(t, 0, len(errs))
+}
