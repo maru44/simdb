@@ -7,4 +7,4 @@ gen:
 	go generate ./...
 
 bench:
-	go test -bench . -benchmem ./tests/bench
+	go test -bench . -benchmem ./bench
