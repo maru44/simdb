@@ -47,7 +47,7 @@ Basic Informations.
 ```go
 package gen
 
-//go:generate go run github.com/maru44/simdb db.go --dir=bench --package=bar --config=conf
+//go:generate go run github.com/maru44/simdb db.go --dir=bar --package=bench --config=conf
 
 ```
 
