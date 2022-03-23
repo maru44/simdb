@@ -10,7 +10,7 @@ func BenchmarkInsert(b *testing.B) {
 	value := bench{}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		db.Insert(i, value)
+		_ = db.Insert(i, value)
 	}
 }
 
@@ -27,11 +27,14 @@ func BenchmarkGet(b *testing.B) {
 	db := NewBenchs()
 	value := bench{}
 	for i := 0; i < b.N; i++ {
-		db.Insert(i, value)
+		err := db.Insert(i, value)
+		if err != nil {
+			b.Fatal(err)
+		}
 	}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		db.Get(i)
+		_, _ = db.Get(i)
 	}
 }
 

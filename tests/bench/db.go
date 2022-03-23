@@ -54,6 +54,9 @@ func (t *benchs) Load(id int) (*bench, bool) {
 	t.RLock()
 	defer t.RUnlock()
 	v, ok := t.data[id]
+	if !ok {
+		return nil, ok
+	}
 	return &v, ok
 }
 

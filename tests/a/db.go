@@ -53,6 +53,9 @@ func (t *tableAs) Load(id uint) (*tableA, bool) {
 	t.RLock()
 	defer t.RUnlock()
 	v, ok := t.data[id]
+	if !ok {
+		return nil, ok
+	}
 	return &v, ok
 }
 
