@@ -20,6 +20,7 @@ Basic Informations.
 | ---------- | --------------------------------------------------------- | --------- | -------- |
 | name       | name of table                                             | string    | required |
 | is_private | whether private or not                                    | bool      |
+| is_pointer | whether the value is pointer or not                       | bool      |
 | key_type   | type of key (this table's primary and an only unique key) | string    | required |
 | columns    | array of columns                                          | []Columns |          |
 
@@ -115,18 +116,133 @@ func (t *benchs) List() map[int]bench {
 
 ## Performance
 
+I measured bench mark.
+It depends on struct size, so for your information only.
+
+### Not pointer
+
+I used this struct to measure bench mark.
+
+```go
+type (
+	bench struct {
+		Name    string
+		Email   string
+		age     uint
+		IsValid bool
+	}
+
+	benchs struct {
+		data map[int]bench
+		sync.RWMutex
+	}
+)
+```
+
 A little bit better than `sync.Map`.
 
 ```
-go test -bench . -benchmem ./bench
 goos: darwin
 goarch: arm64
 pkg: github.com/maru44/simdb/_tests/bench
-BenchmarkInsert-8                4487815               250.8 ns/op         246 B/op           0 allocs/op
-BenchmarkInsert_SyncMap-8        2824500               432.6 ns/op         185 B/op           5 allocs/op
-BenchmarkGet-8                  12561126               116.3 ns/op             0 B/op          0 allocs/op
-BenchmarkLoad-8                 11806761               119.4 ns/op             0 B/op          0 allocs/op
-BenchmarkLoad_SyncMap-8          7745020               177.0 ns/op             0 B/op          0 allocs/op
-BenchmarkDelete-8               11140561               125.1 ns/op             0 B/op          0 allocs/op
-BenchmarkDelete_SyncMap-8        7712466               175.9 ns/op             0 B/op          0 allocs/op
+BenchmarkInsert-8                4867156               235.6 ns/op           227 B/op          0 allocs/op
+BenchmarkInsert_SyncMap-8        2842941               363.6 ns/op           184 B/op          5 allocs/op
+BenchmarkGet-8                  12589046               113.1 ns/op             0 B/op          0 allocs/op
+BenchmarkLoad-8                 12701738               111.3 ns/op             0 B/op          0 allocs/op
+BenchmarkLoad_SyncMap-8          8800521               153.4 ns/op             0 B/op          0 allocs/op
+BenchmarkDelete-8               12029200               120.3 ns/op             0 B/op          0 allocs/op
+BenchmarkDelete_SyncMap-8       10508106               133.4 ns/op             0 B/op          0 allocs/op
+```
+
+### Pointer
+
+I used this struct to measure bench mark.
+
+```go
+type (
+	Pt struct {
+		Name    string
+		Email   string
+		age     uint
+		IsValid bool
+	}
+
+	Pts struct {
+		data map[int]*Pt
+		sync.RWMutex
+	}
+)
+```
+
+Even in the case of pointer, a little bit better than `sync.Map`.
+
+```
+goos: darwin
+goarch: arm64
+pkg: github.com/maru44/simdb/tests/bench
+BenchmarkInsertPt-8             10145770               171.2 ns/op            67 B/op          0 allocs/op
+BenchmarkInsertPt_SyncMap-8      3924448               388.6 ns/op           174 B/op          4 allocs/op
+BenchmarkGetPt-8                23999539                71.32 ns/op            0 B/op          0 allocs/op
+BenchmarkLoadPt-8               23471499                65.13 ns/op            0 B/op          0 allocs/op
+BenchmarkLoadPt_SyncMap-8        9493228               153.6 ns/op             0 B/op          0 allocs/op
+BenchmarkDeletePt-8             15360548                90.44 ns/op            0 B/op          0 allocs/op
+BenchmarkDeletePt_SyncMap-8     10498572               133.5 ns/op             0 B/op          0 allocs/op
+```
+
+### Comparing IsPointer or not
+
+**pointer**
+
+```go
+type (
+	Pt struct {
+		Name    string
+		Email   string
+		age     uint
+		IsValid bool
+	}
+
+	Pts struct {
+		data map[int]*Pt
+		sync.RWMutex
+	}
+)
+```
+
+**not pointer**
+
+```go
+type (
+	bench struct {
+		Name    string
+		Email   string
+		age     uint
+		IsValid bool
+	}
+
+	benchs struct {
+		data map[int]bench
+		sync.RWMutex
+	}
+)
+```
+
+In this struct size, pointer is better than not pointer.
+
+```
+goos: darwin
+goarch: arm64
+pkg: github.com/maru44/simdb/tests/bench
+BenchmarkInsert-8                4867156               235.6 ns/op           227 B/op          0 allocs/op
+BenchmarkInsertPt-8             10145770               171.2 ns/op            67 B/op          0 allocs/op
+BenchmarkGet-8                  12589046               113.1 ns/op             0 B/op          0 allocs/op
+BenchmarkLoad-8                 12701738               111.3 ns/op             0 B/op          0 allocs/op
+BenchmarkGetPt-8                23999539                71.32 ns/op            0 B/op          0 allocs/op
+BenchmarkLoadPt-8               23471499                65.13 ns/op            0 B/op          0 allocs/op
+BenchmarkDelete-8               12029200               120.3 ns/op             0 B/op          0 allocs/op
+BenchmarkDeletePt-8             15360548                90.44 ns/op            0 B/op          0 allocs/op
+BenchmarkUpdate-8                9903958               132.9 ns/op             0 B/op          0 allocs/op
+BenchmarkUpdatePt-8             15739252                94.40 ns/op            0 B/op          0 allocs/op
+BenchmarkUpdateName-8            7570064               175.3 ns/op             0 B/op          0 allocs/op
+BenchmarkUpdateNamePt-8         18335049                82.61 ns/op            0 B/op          0 allocs/op
 ```

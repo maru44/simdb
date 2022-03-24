@@ -6,6 +6,11 @@ import (
     "fmt"
 )
 
+{{ $ret := ( $ | camel ) }}
+{{ if $.IsPointer }}
+    {{ $ret = ( printf "*%v" ( $ | camel ) ) }}
+{{ end }}
+
 type (
     {{ $ | camel }} struct {
         {{ range $c := $.Columns -}}
@@ -14,18 +19,18 @@ type (
     }
 
     {{ $ | camel }}s struct {
-        data map[ {{ $.KeyType }} ]{{ $ | camel }}
+        data map[ {{ $.KeyType }} ]{{ $ret }}
         sync.RWMutex
     }
 )
 
 func New{{ $.Name | upperCamel }}s() {{ $ | camel }}s {
     return {{ $ | camel }}s{
-        data: map[ {{ $.KeyType }} ]{{ $ | camel }}{},
+        data: map[ {{ $.KeyType }} ]{{ $ret }}{},
     }
 }
 
-func (t *{{ $ | camel }}s) List() map[ {{ $.KeyType }} ]{{ $ | camel }} {
+func (t *{{ $ | camel }}s) List() map[ {{ $.KeyType }} ]{{ $ret }} {
     t.RLock()
     defer t.RUnlock()
     return t.data
@@ -38,24 +43,24 @@ func (t *{{ $ |camel }}s) Exists(id {{ $.KeyType }}) bool {
     return ok
 }
 
-func (t *{{ $ | camel }}s) Get(id {{ $.KeyType }} ) ({{ $ | camel }}, error) {
+func (t *{{ $ | camel }}s) Get(id {{ $.KeyType }} ) ({{ $ret }}, error) {
     t.RLock()
     defer t.RUnlock()
     v, ok := t.data[id]
     if !ok {
-        return {{ $ | camel }}{}, fmt.Errorf("Not Exists: %v", id)
+        return {{ if $.IsPointer }} nil {{ else }} {{ $ret }}{} {{ end }}, fmt.Errorf("Not Exists: %v", id)
     }
     return v, nil
 }
 
-func (t *{{ $ | camel }}s) Load(id {{ $.KeyType }}) ({{ $ | camel }}, bool) {
+func (t *{{ $ | camel }}s) Load(id {{ $.KeyType }}) ({{ $ret }}, bool) {
     t.RLock()
     defer t.RUnlock()
     value, ok := t.data[id]
     return value, ok
 }
 
-func (t *{{ $ | camel }}s) Insert(id {{ $.KeyType }}, value {{ $ | camel }} ) error {
+func (t *{{ $ | camel }}s) Insert(id {{ $.KeyType }}, value {{ $ret }} ) error {
     t.Lock()
     defer t.Unlock()
     if _, ok := t.data[id]; ok {
@@ -65,7 +70,7 @@ func (t *{{ $ | camel }}s) Insert(id {{ $.KeyType }}, value {{ $ | camel }} ) er
     return nil
 }
 
-func (t *{{ $ | camel }}s) BulkInsert(values map[{{ $.KeyType }}]{{ $ | camel }}) error {
+func (t *{{ $ | camel }}s) BulkInsert(values map[{{ $.KeyType }}]{{ $ret }}) error {
     t.Lock()
     defer t.Unlock()
     for id := range values {
@@ -79,7 +84,7 @@ func (t *{{ $ | camel }}s) BulkInsert(values map[{{ $.KeyType }}]{{ $ | camel }}
     return nil
 }
 
-func (t *{{ $ | camel }}s) Update(id {{ $.KeyType }}, value {{ $ | camel }} ) error {
+func (t *{{ $ | camel }}s) Update(id {{ $.KeyType }}, value {{ $ret }} ) error {
     t.Lock()
     defer t.Unlock()
     if _, ok := t.data[id]; !ok {
@@ -89,13 +94,34 @@ func (t *{{ $ | camel }}s) Update(id {{ $.KeyType }}, value {{ $ | camel }} ) er
     return nil
 }
 
-func (t *{{ $ | camel }}s) Upsert(id {{ $.KeyType }}, value {{ $ | camel }} ) {
+
+{{ range $c := $.Columns -}}
+    func (t *{{ $ | camel }}s) Update{{ $c | camel }}(id {{ $.KeyType }}, value {{ $c.Type }}) error {
+        t.Lock()
+        defer t.Unlock()
+        data, ok := t.data[id]
+        if !ok {
+           return fmt.Errorf("Does not exists: %v", id)
+        }
+        {{ if $.IsPointer -}}
+            data.{{ $c | camel }} = value
+        {{ else -}}
+            data.{{ $c | camel }} = value
+            t.data[id] = data
+        {{ end -}}
+        return nil
+    }
+    
+{{ end -}}
+
+
+func (t *{{ $ | camel }}s) Upsert(id {{ $.KeyType }}, value {{ $ret }} ) {
     t.Lock()
     defer t.Unlock()
     t.data[id] = value
 }
 
-func (t *{{ $ | camel }}s) BulkUpsert(values  map[{{ $.KeyType }}]{{ $ | camel }}) {
+func (t *{{ $ | camel }}s) BulkUpsert(values  map[{{ $.KeyType }}]{{ $ret }}) {
     t.Lock()
     defer t.Unlock()
     for id, value := range values {
@@ -120,5 +146,5 @@ func (t *{{ $ | camel }}s) BulkDelete(ids []{{ $.KeyType }}) {
 func (t *{{ $ | camel }}s) Truncate() {
     t.Lock()
     defer t.Unlock()
-    t.data = map[ {{ $.KeyType }} ]{{ $ | camel }}{}
+    t.data = map[ {{ $.KeyType }} ]{{ $ret }}{}
 }

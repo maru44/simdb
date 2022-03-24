@@ -91,6 +91,54 @@ func (t *benchs) Update(id int, value bench) error {
 	return nil
 }
 
+func (t *benchs) UpdateName(id int, value string) error {
+	t.Lock()
+	defer t.Unlock()
+	data, ok := t.data[id]
+	if !ok {
+		return fmt.Errorf("Does not exists: %v", id)
+	}
+	data.Name = value
+	t.data[id] = data
+	return nil
+}
+
+func (t *benchs) UpdateEmail(id int, value string) error {
+	t.Lock()
+	defer t.Unlock()
+	data, ok := t.data[id]
+	if !ok {
+		return fmt.Errorf("Does not exists: %v", id)
+	}
+	data.Email = value
+	t.data[id] = data
+	return nil
+}
+
+func (t *benchs) Updateage(id int, value uint) error {
+	t.Lock()
+	defer t.Unlock()
+	data, ok := t.data[id]
+	if !ok {
+		return fmt.Errorf("Does not exists: %v", id)
+	}
+	data.age = value
+	t.data[id] = data
+	return nil
+}
+
+func (t *benchs) UpdateIsValid(id int, value bool) error {
+	t.Lock()
+	defer t.Unlock()
+	data, ok := t.data[id]
+	if !ok {
+		return fmt.Errorf("Does not exists: %v", id)
+	}
+	data.IsValid = value
+	t.data[id] = data
+	return nil
+}
+
 func (t *benchs) Upsert(id int, value bench) {
 	t.Lock()
 	defer t.Unlock()

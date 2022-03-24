@@ -1,0 +1,13 @@
+name: pt
+key_type: int
+is_pointer: true
+columns:
+  - name: name
+    type: string
+  - name: email
+    type: string
+  - name: age
+    type: uint
+    is_private: true
+  - name: isValid
+    type: bool

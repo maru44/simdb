@@ -11,6 +11,8 @@ type (
 		Name string `mapstructure:"name"`
 		// table struct should be private or not
 		IsPrivate bool `mapstructure:"is_private"`
+		// map's value is pointer
+		IsPointer bool `mapstructure:"is_pointer"`
 		// package name of generated file name: required
 		PackageName string `mapstructure:"package_name"`
 		// type of key (this table's primary and unique key): required

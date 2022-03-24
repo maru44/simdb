@@ -130,6 +130,56 @@ func TestUpdate(t *testing.T) {
 	}
 }
 
+func TestUpdateColumn(t *testing.T) {
+	db := tableAs{
+		data: map[uint]tableA{
+			1: tableA{Name: 200},
+			2: tableA{Name: 404},
+			3: tableA{Name: 401},
+		},
+	}
+
+	tests := []struct {
+		name      string
+		updateID  uint
+		value     int32
+		wantNoErr bool
+		wantItems map[uint]tableA
+	}{
+		{
+			name:      "success",
+			updateID:  2,
+			value:     400,
+			wantNoErr: true,
+			wantItems: map[uint]tableA{
+				1: tableA{Name: 200},
+				2: tableA{Name: 400},
+				3: tableA{Name: 401},
+			},
+		},
+		{
+			name:      "failed",
+			updateID:  5,
+			value:     403,
+			wantNoErr: false,
+			wantItems: map[uint]tableA{
+				1: tableA{Name: 200},
+				2: tableA{Name: 400},
+				3: tableA{Name: 401},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			err := db.UpdateName(tt.updateID, tt.value)
+			assert.Equal(t, tt.wantNoErr, err == nil)
+			assert.Equal(t, tt.wantItems, db.List())
+		})
+	}
+}
+
 func TestGetAndLoadAndExists(t *testing.T) {
 	timeBefore := time.Now().Add(-2 * time.Hour).Unix()
 	timeAfter := time.Now().Add(2 * time.Hour).Unix()

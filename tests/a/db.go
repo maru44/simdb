@@ -90,6 +90,42 @@ func (t *tableAs) Update(id uint, value tableA) error {
 	return nil
 }
 
+func (t *tableAs) UpdateName(id uint, value int32) error {
+	t.Lock()
+	defer t.Unlock()
+	data, ok := t.data[id]
+	if !ok {
+		return fmt.Errorf("Does not exists: %v", id)
+	}
+	data.Name = value
+	t.data[id] = data
+	return nil
+}
+
+func (t *tableAs) UpdateExpiredAt(id uint, value int64) error {
+	t.Lock()
+	defer t.Unlock()
+	data, ok := t.data[id]
+	if !ok {
+		return fmt.Errorf("Does not exists: %v", id)
+	}
+	data.ExpiredAt = value
+	t.data[id] = data
+	return nil
+}
+
+func (t *tableAs) UpdateIsExpired(id uint, value bool) error {
+	t.Lock()
+	defer t.Unlock()
+	data, ok := t.data[id]
+	if !ok {
+		return fmt.Errorf("Does not exists: %v", id)
+	}
+	data.IsExpired = value
+	t.data[id] = data
+	return nil
+}
+
 func (t *tableAs) Upsert(id uint, value tableA) {
 	t.Lock()
 	defer t.Unlock()
