@@ -90,6 +90,39 @@ func (t *Pts) Update(id string, value *Pt) error {
 	return nil
 }
 
+func (t *Pts) UpdateName(id string, value string) error {
+	t.Lock()
+	defer t.Unlock()
+	data, ok := t.data[id]
+	if !ok {
+		return fmt.Errorf("Does not exists: %v", id)
+	}
+	data.Name = value
+	return nil
+}
+
+func (t *Pts) UpdateExpiredAt(id string, value int64) error {
+	t.Lock()
+	defer t.Unlock()
+	data, ok := t.data[id]
+	if !ok {
+		return fmt.Errorf("Does not exists: %v", id)
+	}
+	data.ExpiredAt = value
+	return nil
+}
+
+func (t *Pts) UpdateIsExpired(id string, value bool) error {
+	t.Lock()
+	defer t.Unlock()
+	data, ok := t.data[id]
+	if !ok {
+		return fmt.Errorf("Does not exists: %v", id)
+	}
+	data.IsExpired = value
+	return nil
+}
+
 func (t *Pts) Upsert(id string, value *Pt) {
 	t.Lock()
 	defer t.Unlock()

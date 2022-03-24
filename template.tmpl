@@ -94,6 +94,27 @@ func (t *{{ $ | camel }}s) Update(id {{ $.KeyType }}, value {{ $ret }} ) error {
     return nil
 }
 
+
+{{ range $c := $.Columns -}}
+    func (t *{{ $ | camel }}s) Update{{ $c | camel }}(id {{ $.KeyType }}, value {{ $c.Type }}) error {
+        t.Lock()
+        defer t.Unlock()
+        data, ok := t.data[id]
+        if !ok {
+           return fmt.Errorf("Does not exists: %v", id)
+        }
+        {{ if $.IsPointer -}}
+            data.{{ $c | camel }} = value
+        {{ else -}}
+            data.{{ $c | camel }} = value
+            t.data[id] = data
+        {{ end -}}
+        return nil
+    }
+    
+{{ end -}}
+
+
 func (t *{{ $ | camel }}s) Upsert(id {{ $.KeyType }}, value {{ $ret }} ) {
     t.Lock()
     defer t.Unlock()
