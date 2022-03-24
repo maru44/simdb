@@ -16,15 +16,6 @@ func BenchmarkInsert(b *testing.B) {
 	}
 }
 
-func BenchmarkInsertPt(b *testing.B) {
-	db := pt.NewPts()
-	value := pt.Pt{}
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		_ = db.Insert(i, &value)
-	}
-}
-
 func BenchmarkInsert_SyncMap(b *testing.B) {
 	db := sync.Map{}
 	value := bench{}
@@ -52,36 +43,6 @@ func BenchmarkGet(b *testing.B) {
 func BenchmarkLoad(b *testing.B) {
 	db := NewBenchs()
 	value := bench{}
-	for i := 0; i < b.N; i++ {
-		err := db.Insert(i, value)
-		if err != nil {
-			b.Fatal(err)
-		}
-	}
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		_, _ = db.Load(i)
-	}
-}
-
-func BenchmarkGetPt(b *testing.B) {
-	db := pt.NewPts()
-	value := &pt.Pt{}
-	for i := 0; i < b.N; i++ {
-		err := db.Insert(i, value)
-		if err != nil {
-			b.Fatal(err)
-		}
-	}
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		_, _ = db.Get(i)
-	}
-}
-
-func BenchmarkLoadPt(b *testing.B) {
-	db := pt.NewPts()
-	value := &pt.Pt{}
 	for i := 0; i < b.N; i++ {
 		err := db.Insert(i, value)
 		if err != nil {
@@ -122,6 +83,85 @@ func BenchmarkDelete(b *testing.B) {
 	}
 }
 
+func BenchmarkDelete_SyncMap(b *testing.B) {
+	db := sync.Map{}
+	value := bench{}
+	for i := 0; i < b.N; i++ {
+		db.Store(i, value)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		db.Delete(i)
+	}
+}
+
+/*******************************
+
+		pt
+
+*******************************/
+
+func BenchmarkInsertPt(b *testing.B) {
+	db := pt.NewPts()
+	value := pt.Pt{}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_ = db.Insert(i, &value)
+	}
+}
+
+func BenchmarkInsertPt_SyncMap(b *testing.B) {
+	db := sync.Map{}
+	value := &pt.Pt{}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		db.Store(i, value)
+	}
+}
+
+func BenchmarkGetPt(b *testing.B) {
+	db := pt.NewPts()
+	value := &pt.Pt{}
+	for i := 0; i < b.N; i++ {
+		err := db.Insert(i, value)
+		if err != nil {
+			b.Fatal(err)
+		}
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_, _ = db.Get(i)
+	}
+}
+
+func BenchmarkLoadPt(b *testing.B) {
+	db := pt.NewPts()
+	value := &pt.Pt{}
+	for i := 0; i < b.N; i++ {
+		err := db.Insert(i, value)
+		if err != nil {
+			b.Fatal(err)
+		}
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_, _ = db.Load(i)
+	}
+}
+
+func BenchmarkLoadPt_SyncMap(b *testing.B) {
+	db := sync.Map{}
+	value := &pt.Pt{}
+	for i := 0; i < b.N; i++ {
+		db.Store(i, value)
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		val, _ := db.Load(i)
+		_ = val.(*pt.Pt)
+	}
+}
+
 func BenchmarkDeletePt(b *testing.B) {
 	db := pt.NewPts()
 	value := &pt.Pt{}
@@ -137,9 +177,9 @@ func BenchmarkDeletePt(b *testing.B) {
 	}
 }
 
-func BenchmarkDelete_SyncMap(b *testing.B) {
+func BenchmarkDeletePt_SyncMap(b *testing.B) {
 	db := sync.Map{}
-	value := bench{}
+	value := &pt.Pt{}
 	for i := 0; i < b.N; i++ {
 		db.Store(i, value)
 	}
@@ -148,6 +188,12 @@ func BenchmarkDelete_SyncMap(b *testing.B) {
 		db.Delete(i)
 	}
 }
+
+/*******************************
+
+		pt vs normal
+
+*******************************/
 
 func BenchmarkUpdate(b *testing.B) {
 	db := NewBenchs()
