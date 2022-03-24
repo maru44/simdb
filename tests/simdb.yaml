@@ -1,0 +1,10 @@
+name: pt
+key_type: string
+is_pointer: true
+columns:
+  - name: name
+    type: string
+  - name: expired_at
+    type: int64
+  - name: isExpired
+    type: bool
