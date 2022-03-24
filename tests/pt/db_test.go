@@ -10,31 +10,31 @@ import (
 func TestGet(t *testing.T) {
 	db := NewPts()
 
-	err := db.BulkInsert(map[string]*Pt{
-		"1": &Pt{Name: "foo"},
-		"2": &Pt{Name: "bar"},
+	err := db.BulkInsert(map[int]*Pt{
+		1: &Pt{Name: "foo"},
+		2: &Pt{Name: "bar"},
 	})
 	require.NoError(t, err)
 
-	d1, err := db.Get("1")
+	d1, err := db.Get(1)
 	require.NoError(t, err)
 	d1.Name = "foo2"
 
 	tests := []struct {
 		name          string
-		id            string
+		id            int
 		wantVal       *Pt
 		wantIsNoError bool
 	}{
 		{
 			name:          "success",
-			id:            "1",
+			id:            1,
 			wantVal:       &Pt{Name: "foo2"},
 			wantIsNoError: true,
 		},
 		{
 			name:          "failed",
-			id:            "3",
+			id:            3,
 			wantVal:       nil,
 			wantIsNoError: false,
 		},

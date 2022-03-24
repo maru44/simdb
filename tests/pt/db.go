@@ -9,37 +9,38 @@ import (
 
 type (
 	Pt struct {
-		Name      string
-		ExpiredAt int64
-		IsExpired bool
+		Name    string
+		Email   string
+		age     uint
+		IsValid bool
 	}
 
 	Pts struct {
-		data map[string]*Pt
+		data map[int]*Pt
 		sync.RWMutex
 	}
 )
 
 func NewPts() Pts {
 	return Pts{
-		data: map[string]*Pt{},
+		data: map[int]*Pt{},
 	}
 }
 
-func (t *Pts) List() map[string]*Pt {
+func (t *Pts) List() map[int]*Pt {
 	t.RLock()
 	defer t.RUnlock()
 	return t.data
 }
 
-func (t *Pts) Exists(id string) bool {
+func (t *Pts) Exists(id int) bool {
 	t.RLock()
 	defer t.RUnlock()
 	_, ok := t.data[id]
 	return ok
 }
 
-func (t *Pts) Get(id string) (*Pt, error) {
+func (t *Pts) Get(id int) (*Pt, error) {
 	t.RLock()
 	defer t.RUnlock()
 	v, ok := t.data[id]
@@ -49,14 +50,14 @@ func (t *Pts) Get(id string) (*Pt, error) {
 	return v, nil
 }
 
-func (t *Pts) Load(id string) (*Pt, bool) {
+func (t *Pts) Load(id int) (*Pt, bool) {
 	t.RLock()
 	defer t.RUnlock()
 	value, ok := t.data[id]
 	return value, ok
 }
 
-func (t *Pts) Insert(id string, value *Pt) error {
+func (t *Pts) Insert(id int, value *Pt) error {
 	t.Lock()
 	defer t.Unlock()
 	if _, ok := t.data[id]; ok {
@@ -66,7 +67,7 @@ func (t *Pts) Insert(id string, value *Pt) error {
 	return nil
 }
 
-func (t *Pts) BulkInsert(values map[string]*Pt) error {
+func (t *Pts) BulkInsert(values map[int]*Pt) error {
 	t.Lock()
 	defer t.Unlock()
 	for id := range values {
@@ -80,7 +81,7 @@ func (t *Pts) BulkInsert(values map[string]*Pt) error {
 	return nil
 }
 
-func (t *Pts) Update(id string, value *Pt) error {
+func (t *Pts) Update(id int, value *Pt) error {
 	t.Lock()
 	defer t.Unlock()
 	if _, ok := t.data[id]; !ok {
@@ -90,7 +91,7 @@ func (t *Pts) Update(id string, value *Pt) error {
 	return nil
 }
 
-func (t *Pts) UpdateName(id string, value string) error {
+func (t *Pts) UpdateName(id int, value string) error {
 	t.Lock()
 	defer t.Unlock()
 	data, ok := t.data[id]
@@ -101,35 +102,46 @@ func (t *Pts) UpdateName(id string, value string) error {
 	return nil
 }
 
-func (t *Pts) UpdateExpiredAt(id string, value int64) error {
+func (t *Pts) UpdateEmail(id int, value string) error {
 	t.Lock()
 	defer t.Unlock()
 	data, ok := t.data[id]
 	if !ok {
 		return fmt.Errorf("Does not exists: %v", id)
 	}
-	data.ExpiredAt = value
+	data.Email = value
 	return nil
 }
 
-func (t *Pts) UpdateIsExpired(id string, value bool) error {
+func (t *Pts) Updateage(id int, value uint) error {
 	t.Lock()
 	defer t.Unlock()
 	data, ok := t.data[id]
 	if !ok {
 		return fmt.Errorf("Does not exists: %v", id)
 	}
-	data.IsExpired = value
+	data.age = value
 	return nil
 }
 
-func (t *Pts) Upsert(id string, value *Pt) {
+func (t *Pts) UpdateIsValid(id int, value bool) error {
+	t.Lock()
+	defer t.Unlock()
+	data, ok := t.data[id]
+	if !ok {
+		return fmt.Errorf("Does not exists: %v", id)
+	}
+	data.IsValid = value
+	return nil
+}
+
+func (t *Pts) Upsert(id int, value *Pt) {
 	t.Lock()
 	defer t.Unlock()
 	t.data[id] = value
 }
 
-func (t *Pts) BulkUpsert(values map[string]*Pt) {
+func (t *Pts) BulkUpsert(values map[int]*Pt) {
 	t.Lock()
 	defer t.Unlock()
 	for id, value := range values {
@@ -137,13 +149,13 @@ func (t *Pts) BulkUpsert(values map[string]*Pt) {
 	}
 }
 
-func (t *Pts) Delete(id string) {
+func (t *Pts) Delete(id int) {
 	t.Lock()
 	defer t.Unlock()
 	delete(t.data, id)
 }
 
-func (t *Pts) BulkDelete(ids []string) {
+func (t *Pts) BulkDelete(ids []int) {
 	t.Lock()
 	defer t.Unlock()
 	for _, id := range ids {
@@ -154,5 +166,5 @@ func (t *Pts) BulkDelete(ids []string) {
 func (t *Pts) Truncate() {
 	t.Lock()
 	defer t.Unlock()
-	t.data = map[string]*Pt{}
+	t.data = map[int]*Pt{}
 }

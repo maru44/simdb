@@ -1,10 +1,13 @@
 name: pt
-key_type: string
+key_type: int
 is_pointer: true
 columns:
   - name: name
     type: string
-  - name: expired_at
-    type: int64
-  - name: isExpired
+  - name: email
+    type: string
+  - name: age
+    type: uint
+    is_private: true
+  - name: isValid
     type: bool
