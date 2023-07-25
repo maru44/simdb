@@ -11,8 +11,8 @@ func TestGet(t *testing.T) {
 	db := NewPts()
 
 	err := db.BulkInsert(map[int]*Pt{
-		1: &Pt{Name: "foo"},
-		2: &Pt{Name: "bar"},
+		1: {Name: "foo"},
+		2: {Name: "bar"},
 	})
 	require.NoError(t, err)
 

@@ -8,27 +8,27 @@ type (
 	// material of table
 	Material struct {
 		// table name: required
-		Name string `mapstructure:"name"`
+		Name string `yaml:"name" toml:"name"`
 		// table struct should be private or not
-		IsPrivate bool `mapstructure:"is_private"`
+		IsPrivate bool `yaml:"is_private" toml:"is_private"`
 		// map's value is pointer
-		IsPointer bool `mapstructure:"is_pointer"`
+		IsPointer bool `yaml:"is_pointer" toml:"is_pointer"`
 		// package name of generated file name: required
-		PackageName string `mapstructure:"package_name"`
+		PackageName string `yaml:"package_name" toml:"package_name"`
 		// type of key (this table's primary and unique key): required
-		KeyType string `mapstructure:"key_type"`
+		KeyType string `yaml:"key_type" toml:"key_type"`
 		// columns
-		Columns []ColumnMaterial `mapstructure:"columns"`
+		Columns []ColumnMaterial `yaml:"columns" toml:"columns"`
 	}
 
 	// material of column
 	ColumnMaterial struct {
 		// column name: required
-		Name string `mapstructure:"name"`
+		Name string `yaml:"name" toml:"name"`
 		// type of column: required
-		Type string `mapstructure:"type"`
+		Type string `yaml:"type" toml:"type"`
 		// the field should be private or not
-		IsPrivate bool `mapstructure:"is_private"`
+		IsPrivate bool `yaml:"is_private" toml:"is_private"`
 	}
 
 	// interface have name and isPrivate
