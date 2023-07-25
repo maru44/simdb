@@ -39,10 +39,15 @@ func main() {
 	var m *Material
 	var parsed bool
 	fileByExt, err := getFileByExtensionFromFileName(".", args.Config)
+	if err != nil {
+		log.Fatal(err)
+	}
 	for _, e := range configExtensions {
 		if file, ok := fileByExt[e]; ok {
 			fn := unmarshalerByExt[e]
-			fn(file, &m)
+			if err := fn(file, &m); err != nil {
+				log.Fatal("failed to parse config file", err)
+			}
 			parsed = true
 			break
 		}
