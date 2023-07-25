@@ -133,9 +133,9 @@ func TestUpdate(t *testing.T) {
 func TestUpdateColumn(t *testing.T) {
 	db := tableAs{
 		data: map[uint]tableA{
-			1: tableA{Name: 200},
-			2: tableA{Name: 404},
-			3: tableA{Name: 401},
+			1: {Name: 200},
+			2: {Name: 404},
+			3: {Name: 401},
 		},
 	}
 
@@ -152,9 +152,9 @@ func TestUpdateColumn(t *testing.T) {
 			value:     400,
 			wantNoErr: true,
 			wantItems: map[uint]tableA{
-				1: tableA{Name: 200},
-				2: tableA{Name: 400},
-				3: tableA{Name: 401},
+				1: {Name: 200},
+				2: {Name: 400},
+				3: {Name: 401},
 			},
 		},
 		{
@@ -163,9 +163,9 @@ func TestUpdateColumn(t *testing.T) {
 			value:     403,
 			wantNoErr: false,
 			wantItems: map[uint]tableA{
-				1: tableA{Name: 200},
-				2: tableA{Name: 400},
-				3: tableA{Name: 401},
+				1: {Name: 200},
+				2: {Name: 400},
+				3: {Name: 401},
 			},
 		},
 	}

@@ -4,9 +4,9 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/alexflint/go-arg"
-	"github.com/spf13/viper"
 )
 
 // command positional arguments
@@ -22,27 +22,38 @@ type commandArgs struct {
 
 	/* config */
 
-	// config file without extensions
+	// config file without extension
+	// The priority is as follows.
+	// yaml, yml, toml, json
 	Config string `default:"simdb"`
 }
 
-func main() {
-	// read env first
-	viper.AutomaticEnv()
+var configExtensions = []string{
+	".yaml", ".yml", ".toml", ".json",
+}
 
+func main() {
 	var args commandArgs
 	arg.MustParse(&args)
 
-	viper.SetConfigName(args.Config)
-	viper.AddConfigPath(".")
-
-	if err := viper.ReadInConfig(); err != nil {
-		log.Fatal("failed to read config: ", err)
-	}
-
 	var m *Material
-	if err := viper.Unmarshal(&m); err != nil {
-		log.Fatal("failed to unmarshal material: ", err)
+	var parsed bool
+	fileByExt, err := getFileByExtensionFromFileName(".", args.Config)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, e := range configExtensions {
+		if file, ok := fileByExt[e]; ok {
+			fn := unmarshalerByExt[e]
+			if err := fn(file, &m); err != nil {
+				log.Fatal("failed to parse config file", err)
+			}
+			parsed = true
+			break
+		}
+	}
+	if !parsed {
+		log.Fatal("failed to read config file")
 	}
 
 	// set package name if blank
@@ -75,4 +86,20 @@ func main() {
 	if err := os.WriteFile(outputPath, data, 0600); err != nil {
 		log.Fatal("failed to write file: ", err)
 	}
+}
+
+func getFileByExtensionFromFileName(dirPath, fileNameWithoutExt string) (map[string]string, error) {
+	files, err := os.ReadDir(dirPath)
+	if err != nil {
+		return nil, err
+	}
+
+	out := make(map[string]string)
+	for _, file := range files {
+		fileName := file.Name()
+		if strings.TrimSuffix(fileName, filepath.Ext(fileName)) == fileNameWithoutExt {
+			out[filepath.Ext(fileName)] = fileName
+		}
+	}
+	return out, nil
 }
